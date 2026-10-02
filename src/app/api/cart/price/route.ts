@@ -51,6 +51,8 @@ export async function POST(request: NextRequest) {
       totalCents: priced.totalCents,
       promoCode: priced.promo.code,
       promoValid: priced.promo.code === null || !priced.promo.invalid,
+      /** Present only when the code is genuine but the basket is too small. */
+      promoMinSubtotalCents: priced.promo.minSubtotalCents ?? null,
       lines: priced.lines.map((line) => ({
         bookId: line.bookId,
         title: line.title,

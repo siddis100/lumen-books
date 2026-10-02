@@ -250,6 +250,8 @@
     "promoRemove": "إزالة",
     "promoApplied": "تم تطبيق الكود {code} — وفّرت {amount}.",
     "promoInvalid": "كود الخصم غير صالح.",
+    "promoMinSubtotal": "أضف {amount} لاستخدام هذا الكود.",
+    "promoMinSubtotalShort": "سلتك صغيرة جدًا لاستخدام هذا الكود.",
     "promoExpired": "انتهت صلاحية كود الخصم.",
     "total": "الإجمالي",
     "checkout": "إتمام الطلب",

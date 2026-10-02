@@ -40,6 +40,12 @@ export type PromoResult = {
   discountCents: number;
   kind: "percent" | "fixed";
   invalid: boolean;
+  /**
+   * Set when the code itself is fine but the basket is too small. Without this
+   * the caller cannot tell "this code does not exist" from "add $4.10 more",
+   * and shows the customer a false accusation about their own code.
+   */
+  minSubtotalCents?: number;
 };
 
 export type PricedOrder = {
@@ -116,7 +122,13 @@ export async function pricePromo(code: string | undefined, subtotalCents: number
     return { code: normalized, discountCents: 0, kind: promo.kind, invalid: true };
   }
   if (promo.minSubtotalCents > subtotalCents) {
-    return { code: normalized, discountCents: 0, kind: promo.kind, invalid: true };
+    return {
+      code: normalized,
+      discountCents: 0,
+      kind: promo.kind,
+      invalid: true,
+      minSubtotalCents: promo.minSubtotalCents,
+    };
   }
 
   const discountCents =

@@ -250,6 +250,8 @@
     "promoRemove": "Remove",
     "promoApplied": "Code {code} applied — you saved {amount}.",
     "promoInvalid": "That promo code is not valid.",
+    "promoMinSubtotal": "Add {amount} more to use this code.",
+    "promoMinSubtotalShort": "Your basket is too small for this code.",
     "promoExpired": "That promo code has expired.",
     "total": "Total",
     "checkout": "Proceed to checkout",

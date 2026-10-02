@@ -250,6 +250,8 @@
     "promoRemove": "Retirer",
     "promoApplied": "Code {code} appliqué — vous économisez {amount}.",
     "promoInvalid": "Ce code promo n'est pas valide.",
+    "promoMinSubtotal": "Ajoutez {amount} pour utiliser ce code.",
+    "promoMinSubtotalShort": "Votre panier est trop petit pour ce code.",
     "promoExpired": "Ce code promo a expiré.",
     "total": "Total",
     "checkout": "Passer la commande",

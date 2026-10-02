@@ -37,6 +37,7 @@ export function CartView() {
     discountCents: number;
     totalCents: number;
     promoValid: boolean;
+    promoMinSubtotalCents?: number | null;
   } | null>(null);
   const [priceError, setPriceError] = useState<string | null>(null);
 
@@ -272,6 +273,13 @@ export function CartView() {
               pricing.promoValid ? (
                 <p className="text-xs text-emerald-600">
                   {t("promoApplied", { code: promo, amount: formatPrice(discount) })}
+                </p>
+              ) : pricing.promoMinSubtotalCents &&
+                  pricing.promoMinSubtotalCents > pricing.subtotalCents ? (
+                <p className="text-xs text-amber-600">
+                  {t("promoMinSubtotal", {
+                    amount: formatPrice(pricing.promoMinSubtotalCents - pricing.subtotalCents),
+                  })}
                 </p>
               ) : (
                 <p className="text-destructive text-xs">{t("promoInvalid")}</p>
