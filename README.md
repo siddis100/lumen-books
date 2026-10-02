@@ -19,8 +19,17 @@ npm run dev                  # http://localhost:3000
 | --- | --- |
 | `npm run dev` | serveur de développement |
 | `npm run build` | build de production (génère aussi les types de routes) |
-| `npx tsc --noEmit -p tsconfig.json` | vérification de types seule |
+| `npm run typecheck` | vérification de types seule |
+| `npm run check` | typecheck + build, la porte à passer avant un push |
 | `npm run lint` | ESLint |
+| `npm run env:check` | dit quelles variables manquent **sans jamais afficher de valeur** |
+| `npm run db:probe` | teste la connexion Postgres (lecture seule) et dit si la migration est à appliquer |
+| `npm run db:migrate` | plan de migration (dry run) — ajouter `-- --apply` pour l'exécuter |
+| `npm run db:seed` | migration + `db/seed.sql` (démo) — ajouter `-- --apply` pour l'exécuter |
+
+Le build **réussit même sans aucune variable d'environnement** : les pages
+restent rendues et le catalogue se dégrade en « vide mais fonctionnel ». Un
+déploiement Vercel ne peut donc jamais échouer pour cause de clé manquante.
 
 ---
 
@@ -28,17 +37,32 @@ npm run dev                  # http://localhost:3000
 
 ### 1. Supabase — https://supabase.com/dashboard
 
-Créer un projet, puis dans l'éditeur SQL exécuter **dans l'ordre** :
+Créer un projet, puis appliquer le schéma. Deux chemins possibles :
 
-1. `db/migrations/0000_init.sql` — schéma, RLS, buckets `covers` (public) et
-   `pdfs` (privé).
-2. `db/seed.sql` — 5 catégories, 12 livres de démonstration et le code promo
-   `WELCOME10`. Idempotent (`on conflict do nothing`), donc sans risque.
+- **Automatique** — renseigner `DATABASE_URL`, puis `npm run db:seed -- --apply`.
+  Tout tourne dans une seule transaction : soit les tables, index, policies RLS
+  et buckets existent, soit rien n'a été créé. La commande refuse de tourner si
+  une table `orders` existe déjà.
+- **Manuel** — dans l'éditeur SQL, exécuter **dans l'ordre** :
+  `db/migrations/0000_init.sql` puis `db/seed.sql`. Les deux fichiers sont du
+  SQL standard, sans méta-commande `psql`.
+
+`db/seed.sql` contient 5 catégories, 12 livres de démonstration et le code promo
+`WELCOME10`. Idempotent (`on conflict do nothing`), donc sans risque.
 
 Récupérer ensuite `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
 `SUPABASE_SERVICE_ROLE_KEY` et `DATABASE_URL`
 (*Project Settings → Data → Connection string*, mode **transaction pooler**
 port 6543 pour l'application, **session pooler** port 5432 pour les migrations).
+
+> `NEXT_PUBLIC_SUPABASE_URL` est indispensable **en plus** de `SUPABASE_URL` :
+> c'est elle que le navigateur lit pour l'authentification. Les deux doivent être
+> renseignées, avec la même valeur.
+>
+> `DATABASE_URL` doit avoir la région réellement remplacée : le modèle contient
+> `aws-0-REGION.pooler.supabase.com`, et `REGION` est à substituer par le nom de
+> votre région (`eu-central-1`, `us-east-1`…). Le mot de passe doit être encodé
+> pour une URL.
 
 ### 2. Resend — https://resend.com/api-keys
 
@@ -68,15 +92,28 @@ connexion.
 
 ### 5. Déploiement — GitHub puis Vercel
 
-Pousser le dépôt sur GitHub, importer le projet sur Vercel, reporter **toutes**
-les clés de `.env.example` dans *Settings → Environment Variables*, puis
-déployer. Mettre `NEXT_PUBLIC_SITE_URL` sur le domaine définitif.
+Pousser le dépôt sur GitHub, puis importer le projet sur Vercel. Reporter
+**toutes** les clés de `.env.example` dans *Settings → Environment Variables*,
+avec `NEXT_PUBLIC_SITE_URL` sur le domaine définitif (sans slash final).
 
-Une fois le site en ligne, créer le webhook PayPal :
+Ordre d Importance dans Vercel :
+
+| Variable | Pourquoi |
+| --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | URL canonique, `sitemap.xml`, `robots.txt`, redirections PayPal |
+| `DATABASE_URL` | sans elle le catalogue est vide |
+| `SUPABASE_SERVICE_ROLE_KEY` + `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` | sans elles : ni connexion, ni PDF |
+| `ADMIN_EMAILS` | rôle admin au premier sign-in |
+| `CRON_SECRET` ou `DOWNLOAD_LINK_SECRET` | sans secret, les liens de téléchargement invité ne sont pas signés |
+| `PAYPAL_*` / `NEXT_PUBLIC_PAYPAL_*` | sans elles, le bouton PayPal n'apparaît pas |
+| `RESEND_API_KEY`, `EMAIL_FROM`, `CONTACT_EMAIL` | sans elles, aucun e-mail ne part |
+
+Déployer une première fois, puis créer le webhook PayPal :
 
 - URL : `https://<domaine>/api/paypal/webhook`
 - événement : `PAYMENT.CAPTURE.COMPLETED`
-- copier l'ID affiché dans `PAYPAL_WEBHOOK_ID`
+- copier l'ID affiché dans `PAYPAL_WEBHOOK_ID`, puis **redéployer** (les
+  variables sont lues au démarrage de la fonction)
 
 Passer enfin `PAYPAL_ENV=live` et `NEXT_PUBLIC_PAYPAL_ENV=live` avec les clés
 Live, une fois le compte PayPal validé.
@@ -96,7 +133,11 @@ facture jamais un titre sans fichier.
 db/
 ├── migrations/0000_init.sql   schéma + RLS + buckets
 └── seed.sql                   catalogue de démonstration
-scripts/patch-messages.mjs    ajout de clés i18n dans les 3 locales
+scripts/
+├── check-env.mjs              variables manquantes, sans afficher les valeurs
+├── probe-db.mjs               connexion Postgres en lecture seule
+├── migrate.mjs                applique le SQL (--apply, --seed)
+└── patch-messages.mjs         ajout de clés i18n dans les 3 locales
 src/
 ├── app/
 │   ├── [locale]/              pages publiques, compte client, admin

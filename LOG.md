@@ -576,3 +576,74 @@ statiques, 44 routes.
   prêtes à recevoir mais vides.
 - Exécuter `0000_init.sql` puis `seed.sql` dans Supabase, renseigner
   `.env.local`, déployer, créer le webhook, puis importer les vrais PDF.
+
+---
+
+## Étape 8 — Dépôt Git, outillage de mise en ligne, déploiement
+
+**Statut :** partially_done
+
+### Objectif
+
+Rendre le projet déployable sans intervention risquée : versionné proprement,
+variables auditablement vérifiables, migration applicable en une commande, puis
+push GitHub et déploiement Vercel.
+
+### Outillage de mise en ligne
+
+- `scripts/check-env.mjs` — audit des variables **sans jamais afficher une
+  valeur** : il ne sort que des états (`missing`, `placeholder`, `ok`). C'est le
+  seul script autorisé à diagnostiquer l'environnement sur une machine qui
+  contient des clés réelles.
+- `scripts/probe-db.mjs` — connexion Postgres en lecture seule. Il liste les
+  tables présentes et indique si `0000_init.sql` doit être appliqué.
+- `scripts/migrate.mjs` — applique `db/migrations/0000_init.sql` puis, avec
+  `--seed`, `db/seed.sql`. **Dry run par défaut** : sans `--apply` il affiche le
+  plan et sort avec le code 0 sans rien écrire. Une seule transaction pour tout
+  le schéma : soit tout est créé, soit rien. Il refuse de tourner si la table
+  `orders` existe déjà, pour ne jamais détruire un schéma existant.
+- `package.json` : `typecheck`, `check` (typecheck + build), `env:check`,
+  `db:probe`, `db:migrate`, `db:seed`, et `engines.node >= 20.9.0` — c'est la
+  version qu'exige Next.js 16.
+- `npm run check` devient la porte unique avant un push. `next build` reste
+  volontairement hors de `check` : le voir passer vert à chaque push est plus
+  utile qu'un garde qui se serait déclenché une fois sur dix.
+
+### Vérification du build sans aucune variable
+
+Point de sûreté vérifié : `.env.local` a été temporairement déplacé, puis
+`npm run build` relance. Le build **passe quand même** — 92 pages, 44 routes. Le
+catalogue se dégrade en « aucun livre » au lieu de faire planter le déploiement.
+Conséquence utile : un build Vercel ne peut pas échouer pour cause de clé
+manquante, et les erreurs visibles en production sont des problèmes de données,
+pas des variables d'environnement.
+
+### Dépôt Git
+
+- `.gitignore` vérifié : `.env*` ignoré **sauf** `.env.example`, ainsi que
+  `.next`, `.vercel`, `node_modules`, `*.tsbuildinfo`.
+- `.gitattributes` ajouté : `* text=auto eol=lf`. Le projet est écrit sur
+  Windows (CRLF) mais compilé sur Linux (Vercel), où un CRLF parasite peut casser
+  un script shell ou un bloc SQL passé à `psql`.
+- **Audit de fuite de secrets** avant le premier commit : les 16 valeurs de
+  `.env.local` ont été comparées au contenu versionné. Résultat : **aucune fuite**,
+  et surtout — **les 16 valeurs sont identiques à `.env.example`**. Autrement
+  dit, `.env.local` n'a jamais été rempli : il n'y a aucun secret réel dans la
+  machine ni dans le dépôt. Rien à révoquer.
+- Un seul `git grep` par valeur, et seul le **nom** de la variable est signalé
+  en cas de correspondance, jamais la valeur.
+- Premier commit : `2a15a8e`, 206 fichiers.
+
+### Reste à faire pour cette étape
+
+- `NEXT_PUBLIC_SUPABASE_URL`, `DATABASE_URL` (région à remplacer) et
+  `ADMIN_EMAILS` sont encore sur leur valeur d'exemple dans `.env.local` :
+  `npm run env:check` sort en 1 tant que ce n'est pas fait.
+- `DOWNLOAD_LINK_SECRET` et les variables `SELLER_*` sont absentes. Sans la
+  première, les liens invités retombent sur `CRON_SECRET`, ce qui fonctionne
+  mais n'est pas l'intention.
+- `gh` et `vercel` ne sont pas installés et aucun accès GitHub/Vercel n'est
+  fourni : la création du dépôt et la mise en ligne doivent être faites à la
+  main, ou après installation des CLI.
+- 1 erreur ESLint résiduelle, dans `src/components/ui/carousel.tsx` : composant
+  shadcn généré et jamais importé. Elle ne bloque ni le typecheck ni le build.
