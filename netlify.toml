@@ -1,0 +1,29 @@
+# Netlify deployment for Lumen Books.
+#
+# The Next.js runtime (`@netlify/plugin-nextjs`, the OpenNext adapter) is NOT
+# pinned here on purpose: Netlify installs and auto-upgrades it for us, which is
+# how we keep the Next.js 16.3.x security patches (CVE-2026-75604, CVE-2026-64642)
+# and the Node-runtime `proxy.ts` fixes flowing in automatically. Pinning the
+# package in package.json would freeze the adapter on one version.
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NEXT_TELEMETRY_DISABLED = "1"
+
+# Everything under `/_next/static` and `public/` is served straight from the
+# Netlify CDN and never reaches the Next.js server, so the immutable caching
+# declared in `next.config.ts` does not apply to those files. Repeat it here or
+# the browser revalidates hashed assets on every visit.
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

@@ -23,9 +23,9 @@ const nextConfig: NextConfig = {
     imageSizes: [64, 96, 128, 200, 256, 320],
   },
 
-  // Vercel keeps Node functions on the edge-less runtime by default; the
-  // (free) Pro region benefits from the Fluid compute default, so we only pin
-  // headers we actually want.
+  // Only pin the headers we actually want; everything else is left to the
+  // platform. Static assets are served by the CDN and never reach this server,
+  // so `netlify.toml` repeats the caching rule for those paths.
   async headers() {
     return [
       {
