@@ -20,14 +20,20 @@ import type { CatalogSort } from "@/lib/queries/catalog";
 export type CatalogFilterCategory = { slug: string; name: string; count?: number };
 export type CatalogFilterLanguage = { code: string; label: string };
 
-const SORT_VALUES: CatalogSort[] = [
-  "relevance",
-  "newest",
-  "oldest",
-  "bestselling",
-  "price-asc",
-  "price-desc",
-  "rating",
+/**
+ * Explicit label keys instead of deriving them from the sort value: the
+ * translation keys are not mechanical (`relevance` -> `sortFeatured`,
+ * `bestselling` -> `sortBestSelling`), so a computed key rendered a raw
+ * `catalog.sortRelevance` to the customer and threw a MISSING_MESSAGE.
+ */
+const SORT_OPTIONS: { value: CatalogSort; labelKey: string }[] = [
+  { value: "relevance", labelKey: "sortFeatured" },
+  { value: "newest", labelKey: "sortNewest" },
+  { value: "oldest", labelKey: "sortOldest" },
+  { value: "bestselling", labelKey: "sortBestSelling" },
+  { value: "price-asc", labelKey: "sortPriceAsc" },
+  { value: "price-desc", labelKey: "sortPriceDesc" },
+  { value: "rating", labelKey: "sortRating" },
 ];
 
 /**
@@ -171,9 +177,9 @@ export function CatalogFilters({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {SORT_VALUES.map((value) => (
-              <SelectItem key={value} value={value}>
-                {t(`sort${value.charAt(0).toUpperCase()}${value.slice(1).replace(/-(\w)/g, (_, c: string) => c.toUpperCase())}`)}
+            {SORT_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {t(option.labelKey)}
               </SelectItem>
             ))}
           </SelectContent>

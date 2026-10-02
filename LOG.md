@@ -647,3 +647,42 @@ pas des variables d'environnement.
   main, ou après installation des CLI.
 - 1 erreur ESLint résiduelle, dans `src/components/ui/carousel.tsx` : composant
   shadcn généré et jamais importé. Elle ne bloque ni le typecheck ni le build.
+
+### Vérification en conditions réelles (`next dev`)
+
+Un build vert ne prouve pas qu'un site fonctionne. Le serveur de développement a
+été lancé et les pages ouvertes au navigateur. Trois défauts que ni le typecheck
+ni le build ne pouvaient voir sont sortis.
+
+**1. `motion` appelé depuis un Server Component** — la home renvoyait 500 sous
+`next dev`, alors que `next build` passait. Erreur : *Attempted to call
+createMotionComponent() from the server*. `motion/react` est un composant
+client ; utilisé dans `hero.tsx`, qui est un Server Component async, il échoue à
+la première requête, mais webpack tolère l'erreur au build et ne la signale
+nulle part. Le hero a été coupé en deux : `hero.tsx` garde les traductions et la
+requête, `hero-content.tsx` est marqué `"use client"` et reçoit les textes en
+props. Un seul fichier du projet importait `motion`.
+
+**2. Clés de traduction calculées dynamiquement** — le catalogue affichait en
+allonge `catalog.sortRelevance` dans le select de tri, avec six
+`IntlError: MISSING_MESSAGE` dans la console. La clé était dérivée de la valeur
+du tri par une expression régulière, alors que les clés ne sont pas
+mécaniques : `relevance` → `sortFeatured`, `bestselling` → `sortBestSelling`, et
+`oldest` n'existait tout simplement pas. Remplacé par une table
+`SORT_OPTIONS` explicite ; `sortOldest` ajouté dans les 3 locales.
+
+**3. Aucun garde-fou** — ce genre de clé manquante ne se voit que sur la page
+concernée, dans la seule langue concernée, et passe le build. Ajout de
+`scripts/i18n-audit.mjs` (`npm run i18n:check`), branché **en tête** de
+`npm run check` : il compare les arbres de clés des 3 locales et sort en 1 dès
+qu'une clé manque. 629 clés, parité vérifiée.
+
+Le reste est conforme : les 3 locales répondent, l'arabe est bien en `dir="rtl"`,
+les 7 libellés de tri sont traduits en français et en arabe,
+`/fr/admin` redirige vers `/fr/auth/sign-in?next=/fr/admin`, et un balayage de
+19 routes (`/`, `/books`, les 3 pages légales, `about`, `contact`, `sign-in`,
+`account`, `orders`, `admin`, `cart`, `checkout`, `sitemap.xml`, `robots.txt`)
+renvoie 19/19 en 200.
+
+`npm run check` revalidé après les corrections : i18n + TypeScript + build
+(92 pages) verts.

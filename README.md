@@ -20,7 +20,8 @@ npm run dev                  # http://localhost:3000
 | `npm run dev` | serveur de développement |
 | `npm run build` | build de production (génère aussi les types de routes) |
 | `npm run typecheck` | vérification de types seule |
-| `npm run check` | typecheck + build, la porte à passer avant un push |
+| `npm run check` | i18n:check + typecheck + build, la porte à passer avant un push |
+| `npm run i18n:check` | vérifie que `en`, `fr` et `ar` ont exactement les mêmes clés |
 | `npm run lint` | ESLint |
 | `npm run env:check` | dit quelles variables manquent **sans jamais afficher de valeur** |
 | `npm run db:probe` | teste la connexion Postgres (lecture seule) et dit si la migration est à appliquer |
@@ -137,6 +138,7 @@ scripts/
 ├── check-env.mjs              variables manquantes, sans afficher les valeurs
 ├── probe-db.mjs               connexion Postgres en lecture seule
 ├── migrate.mjs                applique le SQL (--apply, --seed)
+├── i18n-audit.mjs             parité des clés entre en / fr / ar
 └── patch-messages.mjs         ajout de clés i18n dans les 3 locales
 src/
 ├── app/
