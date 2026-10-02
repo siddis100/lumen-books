@@ -56,6 +56,8 @@ export function CheckoutClient({ promoCode }: { promoCode?: string }) {
         return tCart("promoInvalid");
       case "promo_min_subtotal":
         return tCart("promoMinSubtotalShort");
+      case "promo_expired":
+        return tCart("promoExpired");
       case "book_no_file":
         return tCart("unavailable");
       case "book_unavailable":

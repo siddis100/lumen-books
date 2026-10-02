@@ -46,6 +46,12 @@ export type PromoResult = {
    * and shows the customer a false accusation about their own code.
    */
   minSubtotalCents?: number;
+  /**
+   * Why an otherwise well-formed code was refused. `invalid: true` alone is
+   * too coarse: four different situations collapse into one flag, and the
+   * checkout then blames the shopper for a code that never existed.
+   */
+  reason?: "unknown" | "not_started" | "expired" | "exhausted" | "min_subtotal";
 };
 
 export type PricedOrder = {
@@ -109,17 +115,17 @@ export async function pricePromo(code: string | undefined, subtotalCents: number
     .where(and(eq(promoCodes.code, normalized), eq(promoCodes.isActive, true)))
     .limit(1);
   const promo = rows[0];
-  if (!promo) return { ...empty, code: normalized, invalid: true };
+  if (!promo) return { ...empty, code: normalized, invalid: true, reason: "unknown" };
 
   const now = Date.now();
   if (promo.startsAt && promo.startsAt.getTime() > now) {
-    return { code: normalized, discountCents: 0, kind: promo.kind, invalid: true };
+    return { code: normalized, discountCents: 0, kind: promo.kind, invalid: true, reason: "not_started" };
   }
   if (promo.expiresAt && promo.expiresAt.getTime() < now) {
-    return { code: normalized, discountCents: 0, kind: promo.kind, invalid: true };
+    return { code: normalized, discountCents: 0, kind: promo.kind, invalid: true, reason: "expired" };
   }
   if (promo.maxUses !== null && promo.usedCount >= promo.maxUses) {
-    return { code: normalized, discountCents: 0, kind: promo.kind, invalid: true };
+    return { code: normalized, discountCents: 0, kind: promo.kind, invalid: true, reason: "exhausted" };
   }
   if (promo.minSubtotalCents > subtotalCents) {
     return {
@@ -127,6 +133,7 @@ export async function pricePromo(code: string | undefined, subtotalCents: number
       discountCents: 0,
       kind: promo.kind,
       invalid: true,
+      reason: "min_subtotal",
       minSubtotalCents: promo.minSubtotalCents,
     };
   }

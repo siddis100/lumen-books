@@ -50,7 +50,14 @@ export async function POST(request: NextRequest) {
 
     // A code the shopper typed must not be silently dropped: it would be stored
     // on the order and the full subtotal charged. Fail loudly instead.
+    //
+    // The four refusals are reported separately. Telling someone their code is
+    // invalid when it is simply too early, expired or used up is wrong, and it
+    // is the shopper who ends up looking like the problem.
     if (promoCode && priced.promo.invalid) {
+      const code = priced.promo.reason;
+      if (code === "min_subtotal") throw new OrderError("promo_min_subtotal", promoCode);
+      if (code === "expired" || code === "not_started") throw new OrderError("promo_expired", promoCode);
       throw new OrderError("promo_invalid", promoCode);
     }
 
@@ -99,7 +106,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     if (error instanceof OrderError) {
-      const status = error.code === "promo_invalid" ? 422 : 400;
+      // Every promo refusal is the client's own input, so 422 rather than 409:
+      // the cart is not in a conflicting state, the code simply does not apply.
+      const status = error.code.startsWith("promo_") ? 422 : 400;
       return jsonError(error.code, status);
     }
     console.error("[checkout] failed:", (error as Error).message);
