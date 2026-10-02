@@ -14,9 +14,19 @@ const nextConfig: NextConfig = {
 
   images: {
     // Covers live in the public `covers` Supabase bucket.
+    // Only the project's own project ref is allowed: a wildcard would let any
+    // Supabase project proxy its images through our domain to track visitors.
     remotePatterns: [
-      { protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/public/**" },
-      { protocol: "https", hostname: "*.supabase.in", pathname: "/storage/v1/object/public/**" },
+      {
+        protocol: "https",
+        hostname: "imkxxglvioxggzldylgh.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+      {
+        protocol: "https",
+        hostname: "imkxxglvioxggzldylgh.supabase.in",
+        pathname: "/storage/v1/object/public/**",
+      },
     ],
     formats: ["image/avif", "image/webp"],
     deviceSizes: [360, 480, 640, 768, 1024, 1280, 1536, 1920],
