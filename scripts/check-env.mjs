@@ -40,6 +40,66 @@ const EXPECTED = [
 const PLACEHOLDERS = new Set(["", "xxx", "changeme", "todo", "your-value-here"]);
 
 /**
+ * Countries where PayPal will not open a merchant account, so a store
+ * registered there cannot create live REST credentials at all. Matching is on
+ * a normalised country name because `SELLER_COUNTRY` is free text written by
+ * the seller, not an ISO code.
+ *
+ * This is a warning, not a block: the storefront, the account and the legal
+ * pages can all be correct while the PayPal merchant account simply belongs to
+ * another country. Better to hear it here than at the first real payment.
+ */
+const PAYPAL_RESTRICTED = new Set([
+  "algeria",
+  "dz",
+  "angola",
+  "azerbaijan",
+  "bahrain",
+  "bangladesh",
+  "benin",
+  "botswana",
+  "burundi",
+  "cambodia",
+  "cameroon",
+  "central african republic",
+  "chad",
+  "cote d ivoire",
+  "ivory coast",
+  "democratic republic of the congo",
+  "dr congo",
+  "congo",
+  "egypt",
+  "eswatini",
+  "ethiopia",
+  "gambia",
+  "ghana",
+  "guinea",
+  "guinea-bissau",
+  "kenya",
+  "lesotho",
+  "liberia",
+  "madagascar",
+  "malawi",
+  "mali",
+  "mauritania",
+  "mozambique",
+  "namibia",
+  "niger",
+  "nigeria",
+  "rwanda",
+  "senegal",
+  "sierra leone",
+  "somalia",
+  "south sudan",
+  "sudan",
+  "tanzania",
+  "togo",
+  "uganda",
+  "zambia",
+  "zimbabwe",
+]);
+
+/**
  * A secret whose value is still byte-identical to the one shipped in
  * `.env.example` has not been filled in, whatever it looks like: the new
  * Supabase keys are long random `sb_secret_…` tokens, so no regex can tell a
@@ -138,6 +198,54 @@ for (const row of rows) {
   );
 }
 
+/**
+ * Cross-variable rules the per-row table cannot express.
+ *
+ * Every one of these has the same failure mode: the file looks filled in, the
+ * table reports `OK`, and the bug only surfaces at runtime. `PAYPAL_ENV` is
+ * parsed by a `z.enum` in `src/lib/env.ts`, so a value that is neither
+ * `sandbox` nor `live` throws the moment the checkout touches PayPal instead of
+ * degrading. The `NEXT_PUBLIC_` twins are read by the browser bundle and must
+ * match their server-side counterparts exactly.
+ */
+const problems = [];
+
+function problem(message) {
+  problems.push(message);
+}
+
+for (const name of ["PAYPAL_ENV", "NEXT_PUBLIC_PAYPAL_ENV"]) {
+  const value = read(name);
+  if (value !== undefined && value !== "sandbox" && value !== "live") {
+    problem(
+      `${name} must be exactly "sandbox" or "live" (${value.length} characters found). ` +
+        `The enum in src/lib/env.ts rejects anything else at checkout time.`,
+    );
+  }
+}
+
+/** The browser bundle and the server must not disagree on the PayPal app. */
+for (const [server, client] of [
+  ["PAYPAL_CLIENT_ID", "NEXT_PUBLIC_PAYPAL_CLIENT_ID"],
+  ["PAYPAL_ENV", "NEXT_PUBLIC_PAYPAL_ENV"],
+]) {
+  const a = read(server);
+  const b = read(client);
+  if (a !== undefined && b !== undefined && a !== b) {
+    problem(
+      `${client} does not match ${server} (${b.length} vs ${a.length} characters). ` +
+        `They must be the same value; the browser reads one and the server the other.`,
+    );
+  }
+}
+
+for (const name of ["EMAIL_FROM", "CONTACT_EMAIL"]) {
+  const value = read(name);
+  if (value !== undefined && !value.includes("@")) {
+    problem(`${name} is not an email address (${value.length} characters found).`);
+  }
+}
+
 const blocking = rows.filter((row) => row.required && row.state !== "ok");
 const degraded = rows.filter((row) => !row.required && row.state !== "ok");
 const half = rows.filter((row) => row.state === "incomplete");
@@ -166,6 +274,33 @@ if (samples.length > 0) {
 if (degraded.length > 0) {
   console.log(`Optional features disabled: ${degraded.map((r) => r.name).join(", ")}`);
 }
-console.log("");
+if (problems.length > 0) {
+  console.log("");
+  for (const message of problems) {
+    console.log(`INVALID  ${message}`);
+  }
+  console.log("Each of these passes the table above but fails at runtime.");
+}
 
-process.exit(blocking.length === 0 ? 0 : 1);
+/* ------------------------------------------------------------------ *
+ * Store country vs PayPal
+ * ------------------------------------------------------------------ */
+
+const sellerCountry = (read("SELLER_COUNTRY") ?? "").trim().toLowerCase();
+if (PAYPAL_RESTRICTED.has(sellerCountry)) {
+  console.log(`WARNING  SELLER_COUNTRY is "${read("SELLER_COUNTRY").trim()}", where PayPal`);
+  console.log("         will not open a merchant account, so live REST credentials");
+  console.log("         cannot be created for it. Consequences to plan for:");
+  console.log("           - the PayPal account receiving the money must be registered");
+  console.log("             in a supported country, and its country will not match the");
+  console.log("             legal seller shown on the legal pages;");
+  console.log("           - buyers in the same country cannot pay from a PayPal balance,");
+  console.log("             only from a card in guest checkout, and PayPal may still");
+  console.log("             refuse it - validate with one small real transaction;");
+  console.log("           - for that audience, a local channel (CIB / Edahabia, BaridiMob)");
+  console.log("             is the realistic primary route, PayPal the secondary one.");
+  console.log("         Nothing above is checked here, this is a reminder before deploying.");
+  console.log("");
+}
+
+process.exit(blocking.length === 0 && problems.length === 0 ? 0 : 1);
