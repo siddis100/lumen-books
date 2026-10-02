@@ -8,6 +8,37 @@ import createNextIntlPlugin from "next-intl/plugin";
  */
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
+/** The one Supabase project we are allowed to talk to. */
+const SUPABASE_HOST = "imkxxglvioxggzldylgh.supabase.co";
+
+const isDev = process.env.NODE_ENV !== "production";
+
+/**
+ * Content Security Policy.
+ *
+ * `'unsafe-inline'` stays in `script-src` because Next.js ships the RSC payload
+ * in inline `<script>` tags and threading a nonce through every layout would be
+ * a much larger change. It still blocks any *external* script, which is what a
+ * stored-XSS payload needs, and `object-src 'none'` removes the plugin vector.
+ *
+ * `'unsafe-eval'` and `upgrade-insecure-requests` are development-only: Turbopack
+ * evaluates modules for HMR and `next dev` is served over plain HTTP.
+ */
+const csp = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  "style-src 'self' 'unsafe-inline'",
+  `img-src 'self' data: blob: https://${SUPABASE_HOST}`,
+  "font-src 'self' data:",
+  `connect-src 'self' https://${SUPABASE_HOST} wss://${SUPABASE_HOST}${isDev ? " ws: http:" : ""}`,
+  "frame-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+  ...(isDev ? [] : ["upgrade-insecure-requests"]),
+].join("; ");
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
@@ -41,6 +72,15 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: [
+          { key: "Content-Security-Policy", value: csp },
+          ...(isDev
+            ? []
+            : [
+                {
+                  key: "Strict-Transport-Security",
+                  value: "max-age=31536000; includeSubDomains",
+                },
+              ]),
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
