@@ -3,14 +3,18 @@ import { db } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
+/**
+ * Liveness probe for the platform and for uptime monitoring.
+ *
+ * Only the verdict leaves the server: connection details stay in the logs so a
+ * public endpoint cannot be used to fingerprint the database.
+ */
 export async function GET() {
   try {
-    const rows = await db.execute(sql`select 1 as ok`);
-    return Response.json({ ok: true, rows: rows.length });
+    await db.execute(sql`select 1`);
+    return Response.json({ status: "ok" });
   } catch (error) {
-    return Response.json(
-      { ok: false, name: (error as Error).name, message: (error as Error).message },
-      { status: 503 },
-    );
+    console.error("[health] database unreachable:", (error as Error).message);
+    return Response.json({ status: "degraded" }, { status: 503 });
   }
 }

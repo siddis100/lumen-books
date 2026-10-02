@@ -9,10 +9,19 @@
 
 const FALLBACK_COVER = "/images/cover-placeholder.svg";
 
+/**
+ * `cover_path` holds the key inside the public bucket (`covers/<slug>.<ext>`),
+ * not a URL. Nothing serves that path from the site itself, so it has to be
+ * expanded into the bucket's public endpoint.
+ */
 export function coverUrl(path: string | null | undefined): string {
   if (!path) return FALLBACK_COVER;
   if (/^https?:\/\//.test(path)) return path;
-  return `/${path.replace(/^\/+/, "")}`;
+
+  const key = path.replace(/^\/+/, "");
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/+$/, "");
+  if (!base) return `/${key}`;
+  return `${base}/storage/v1/object/public/${key}`;
 }
 
 export { FALLBACK_COVER };
