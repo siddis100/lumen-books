@@ -1,0 +1,929 @@
+{
+  "metadata": {
+    "siteName": "Lumen Books",
+    "defaultTitle": "Lumen Books — Livres numériques pour esprits curieux",
+    "defaultDescription": "Découvrez Lumen Books : un catalogue international de livres numériques à télécharger immédiatement. Paiement PayPal sécurisé, accès à vie, sans abonnement.",
+    "titleTemplate": "%s | Lumen Books",
+    "ogSiteName": "Lumen Books",
+    "localeLabel": "Français",
+    "ogLocale": "fr_FR"
+  },
+  "common": {
+    "skipToContent": "Aller au contenu",
+    "loading": "Chargement…",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "backHome": "Retour à l'accueil",
+    "close": "Fermer",
+    "menu": "Menu",
+    "language": "Langue",
+    "currency": "USD",
+    "demoBadge": "Démo",
+    "demoNotice": "Cette boutique affiche actuellement des livres de démonstration. Ils seront remplacés par le vrai catalogue prochainement.",
+    "notFoundTitle": "Page introuvable",
+    "notFoundBody": "La page que vous cherchez n'existe pas ou a été déplacée.",
+    "errorTitle": "Erreur inattendue",
+    "errorBody": "Nous n'avons pas pu charger cette page. Merci de réessayer dans un instant."
+  },
+  "nav": {
+    "home": "Accueil",
+    "books": "Livres",
+    "categories": "Catégories",
+    "about": "À propos",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "search": "Rechercher",
+    "searchPlaceholder": "Titre, auteur ou ISBN…",
+    "account": "Mon compte",
+    "cart": "Panier",
+    "cartWithCount": "Panier ({count})",
+    "signIn": "Se connecter",
+    "signUp": "Créer un compte",
+    "signOut": "Se déconnecter",
+    "adminPanel": "Administration",
+    "openMenu": "Ouvrir le menu principal",
+    "closeMenu": "Fermer le menu principal",
+    "toggleTheme": "Basculer le mode sombre",
+    "language": "Langue",
+    "newReleases": "Nouveautés",
+    "bestsellers": "Meilleures ventes"
+  },
+  "home": {
+    "metaTitle": "Livres numériques indépendants, téléchargement instantané",
+    "metaDescription": "Parcourez un catalogue sélectionné de livres numériques. Payez en toute sécurité avec PayPal et téléchargez instantanément, sur tous vos appareils.",
+    "hero": {
+      "eyebrow": "Livres numériques indépendants sélectionnés",
+      "title": "Des livres qui vous accompagnent, où que vous lisiez",
+      "subtitle": "Des livres numériques choisis avec soin auprès d'auteurs indépendants. Achetez une fois avec PayPal, téléchargez immédiatement, lisez partout — sans abonnement ni expiration.",
+      "ctaPrimary": "Parcourir le catalogue",
+      "ctaSecondary": "Voir les nouveautés",
+      "statBooks": "Titres au catalogue",
+      "statInstant": "Téléchargement instantané",
+      "statSecure": "Paiement PayPal sécurisé",
+      "statLanguages": "Formats de lecture",
+      "statsTitle": "Titres au catalogue"
+    },
+    "bestsellers": {
+      "eyebrow": "Favoris des lecteurs",
+      "title": "Meilleures ventes",
+      "subtitle": "Les titres que nos lecteurs relisent et recommandent le plus.",
+      "cta": "Voir toutes les meilleures ventes"
+    },
+    "newReleases": {
+      "eyebrow": "Fraîchement arrivés",
+      "title": "Nouveautés",
+      "subtitle": "Les dernières publications ajoutées au catalogue.",
+      "cta": "Voir toutes les nouveautés"
+    },
+    "categories": {
+      "eyebrow": "Trouvez votre rayon",
+      "title": "Parcourir par catégorie",
+      "subtitle": "De la fiction littéraire aux guides pratiques — explorez la collection.",
+      "cta": "Voir toutes les catégories",
+      "bookCount": "{count, plural, =0 {Aucun titre} =1 {1 titre} other {# titres}}"
+    },
+    "features": {
+      "eyebrow": "Pourquoi Lumen Books",
+      "title": "Une expérience de lecture pensée pour les lecteurs",
+      "items": {
+        "instant": {
+          "title": "Téléchargement instantané",
+          "description": "Payez et vos fichiers sont débloqués immédiatement — sans attente, sans livraison."
+        },
+        "secure": {
+          "title": "Paiement PayPal sécurisé",
+          "description": "Tous les paiements passent par PayPal. Nous ne voyons ni ne conservons vos données bancaires."
+        },
+        "lifetime": {
+          "title": "Accès à vie",
+          "description": "Chaque achat reste dans votre compte pour toujours, sur tous vos appareils."
+        },
+        "curated": {
+          "title": "Sélectionné, pas encombré",
+          "description": "Un catalogue restreint choisi pour la qualité plutôt que pour le volume."
+        },
+        "anyDevice": {
+          "title": "Lisez partout",
+          "description": "Des formats EPUB et PDF compatibles avec téléphones, tablettes, liseuses et ordinateurs."
+        },
+        "support": {
+          "title": "Un support humain",
+          "description": "De vraies personnes répondent à vos questions en un jour ouvré."
+        }
+      }
+    },
+    "testimonials": {
+      "eyebrow": " Bons mots",
+      "title": "Ce qu'en disent les lecteurs",
+      "subtitle": "Retours recueillis auprès d'achats vérifiés.",
+      "items": {
+        "first": {
+          "quote": "J'ai acheté trois titres un lundi soir et ils étaient sur ma liseuse avant d'aller dormir. Tout a pris moins d'une minute.",
+          "name": "Marta K.",
+          "detail": "Achat vérifié"
+        },
+        "second": {
+          "quote": "Enfin une petite librairie qui n'enterre pas les bonnes titres sous des recommandations interminables. La sélection veut vraiment dire quelque chose.",
+          "name": "Daniel R.",
+          "detail": "Achat vérifié"
+        },
+        "third": {
+          "quote": "Paiement PayPal, fichiers immédiats, et une vue bibliothèque qui montre tout ce que je possède. Exactement ce que je voulais.",
+          "name": "Aya N.",
+          "detail": "Achat vérifié"
+        }
+      }
+    },
+    "newsletter": {
+      "eyebrow": "Restez informé",
+      "title": "Les nouveautés, une ou deux fois par mois",
+      "subtitle": "Inscrivez-vous pour être le premier à découvrir les nouveaux titres et les occasionales promotions. Aucun spam, désinscription en un clic.",
+      "placeholder": "vous@exemple.com",
+      "cta": "S'inscrire",
+      "success": "Vous êtes inscrit. Bienvenue !",
+      "error": "Nous n'avons pas pu vous inscrire. Vérifiez l'adresse et réessayez.",
+      "invalid": "Veuillez saisir une adresse e-mail valide.",
+      "privacyNote": "Votre e-mail sert uniquement à la newsletter. Consultez notre politique de confidentialité."
+    },
+    "cta": {
+      "title": "Prêt à commencer à lire ?",
+      "subtitle": "Accès instantané, paiement PayPal sécurisé, bibliothèque à vie.",
+      "button": "Parcourir les livres"
+    },
+    "heroStatsTitle": "Pourquoi les lecteurs choisissent Lumen"
+  },
+  "catalog": {
+    "metaTitle": "Parcourir le catalogue",
+    "metaDescription": "Recherchez et filtrez tout le catalogue Lumen Books par catégorie, prix et langue. Triez par nouveauté, popularité ou note.",
+    "title": "Le catalogue",
+    "subtitle": "{count, plural, =0 {Aucun titre} =1 {1 titre} other {# titres}} disponibles au téléchargement instantané.",
+    "searchPlaceholder": "Titre, auteur ou ISBN…",
+    "filters": "Filtres",
+    "openFilters": "Ouvrir les filtres",
+    "closeFilters": "Fermer les filtres",
+    "resetFilters": "Réinitialiser",
+    "applyFilters": "Voir les résultats",
+    "category": "Catégorie",
+    "allCategories": "Toutes les catégories",
+    "language": "Langue",
+    "allLanguages": "Toutes les langues",
+    "price": "Prix",
+    "priceRange": "Fourchette de prix (USD)",
+    "priceMin": "Min",
+    "priceMax": "Max",
+    "format": "Format",
+    "sort": "Trier par",
+    "sortFeatured": "Mis en avant",
+    "sortNewest": "Nouveautés",
+    "sortBestSelling": "Meilleures ventes",
+    "sortPriceAsc": "Prix croissant",
+    "sortPriceDesc": "Prix décroissant",
+    "sortRating": "Mieux notés",
+    "showing": "Affichage de {from} à {to} sur {total}",
+    "noResults": "Aucun livre ne correspond à vos filtres",
+    "noResultsHint": "Essayez de retirer un filtre, de changer de terme ou de parcourir toutes les catégories.",
+    "loadMore": "Afficher plus",
+    "resultCount": "{count, plural, =0 {Aucun résultat} =1 {1 résultat} other {# résultats}}",
+    "previousPage": "Précédent",
+    "nextPage": "Suivant",
+    "page": "Page {page}",
+    "filtersTitle": "Filtrer le catalogue",
+    "resultCountOne": "1 résultat",
+    "searchHint": "Rechercher par titre, auteur ou ISBN…"
+  },
+  "book": {
+    "addToCart": "Ajouter au panier",
+    "inCart": "Dans le panier",
+    "addedToCart": "Ajouté au panier",
+    "buyNow": "Acheter",
+    "outOfStock": "Indisponible",
+    "preview": "Lire un extrait",
+    "excerpt": "Extrait",
+    "excerptClose": "Fermer l'extrait",
+    "aboutThisBook": "À propos de ce livre",
+    "details": "Détails",
+    "detailIsbn": "ISBN",
+    "detailPages": "Pages",
+    "detailPublished": "Publication",
+    "detailLanguage": "Langue",
+    "detailFormat": "Format",
+    "detailFileSize": "Taille du fichier",
+    "detailCategory": "Catégorie",
+    "reviews": "Avis",
+    "noReviews": "Pas encore d'avis — soyez le premier à partager votre expérience.",
+    "writeReview": "Écrire un avis",
+    "reviewTitle": "Votre avis",
+    "reviewRating": "Votre note",
+    "reviewBody": "Votre avis",
+    "reviewSubmit": "Publier l'avis",
+    "reviewThanks": "Merci ! Votre avis est publié.",
+    "reviewNeedsAuth": "Connectez-vous pour écrire un avis.",
+    "similarBooks": "Vous aimerez aussi",
+    "secureCheckout": "Paiement sécurisé par PayPal",
+    "instantDownload": "Téléchargement instantané après paiement",
+    "lifetimeAccess": "Accès à vie dans votre compte",
+    "metaTitleTemplate": "{title} de {author} — Téléchargement | Lumen Books",
+    "metaDescriptionTemplate": "Téléchargez {title} de {author}. Livre numérique {category}, {pages} pages, disponible immédiatement en EPUB et PDF.",
+    "notFound": "Ce livre n'existe pas ou n'est plus disponible.",
+    "bestsellerBadge": "Meilleure vente",
+    "formatsShort": "EPUB + PDF",
+    "demoBadge": "Démo",
+    "by": "par",
+    "breadcrumb": "Fil d'Ariane"
+  },
+  "cart": {
+    "metaTitle": "Votre panier",
+    "title": "Votre panier",
+    "empty": "Votre panier est vide",
+    "emptyHint": "Parcourez le catalogue et ajoutez quelques titres pour commencer.",
+    "emptyCta": "Parcourir les livres",
+    "itemSingular": "1 livre",
+    "itemPlural": "{count} livres",
+    "remove": "Retirer",
+    "clear": "Vider le panier",
+    "subtotal": "Sous-total",
+    "discount": "Remise",
+    "promoLabel": "Code promo",
+    "promoPlaceholder": "Saisir le code",
+    "promoApply": "Appliquer",
+    "promoRemove": "Retirer",
+    "promoApplied": "Code {code} appliqué — vous économisez {amount}.",
+    "promoInvalid": "Ce code promo n'est pas valide.",
+    "promoExpired": "Ce code promo a expiré.",
+    "total": "Total",
+    "checkout": "Passer la commande",
+    "continueShopping": "Continuer mes achats",
+    "digitalNotice": "Produits numériques — aucune livraison. Les fichiers sont disponibles immédiatement après le paiement.",
+    "taxNotice": "Les prix sont affichés en USD et incluent les taxes applicables.",
+    "freeDownloads": "Téléchargement instantané et sécurisé",
+    "viewCart": "Voir le panier",
+    "quantity": "Quantité",
+    "decreaseQuantity": "Diminuer la quantité",
+    "increaseQuantity": "Augmenter la quantité",
+    "itemsInCart": "{count, plural, one {# livre} other {# livres}} dans le panier",
+    "unavailable": "Ce titre ne peut pas être commandé pour le moment. Retirez-le de votre panier.",
+    "missingTitle": "Ce titre n'existe plus. Retirez-le de votre panier.",
+    "pricingFailed": "Impossible de calculer votre panier. Réessayez dans un instant.",
+    "tooManyAttempts": "Trop de tentatives. Patientez une minute puis réessayez."
+  },
+  "checkout": {
+    "metaTitle": "Paiement sécurisé",
+    "title": "Paiement",
+    "subtitle": "Payez avec PayPal. Vos liens de téléchargement se débloquent dès la confirmation du paiement.",
+    "orderSummary": "Récapitulatif",
+    "payWithPaypal": "Payer avec PayPal",
+    "paypalNote": "Vous serez redirigé vers PayPal pour approuver le paiement, puis ramené ici.",
+    "processing": "Traitement de votre paiement…",
+    "emptyCart": "Votre panier est vide.",
+    "items": "{count, plural, =1 {1 livre} other {# livres}}",
+    "orderTotal": "Total de la commande",
+    "needAccount": "Créez un compte pour conserver vos achats et les télécharger à tout moment.",
+    "createAccountHint": "Le compte est facultatif — mais c'est le seul moyen de retélécharger vos fichiers plus tard.",
+    "success": "Paiement reçu",
+    "successBody": "Merci ! Votre paiement est confirmé et vos téléchargements sont prêts.",
+    "successPending": "Votre paiement a été reçu et est en cours de confirmation par PayPal. Cela prend généralement quelques secondes.",
+    "orderNumber": "Commande",
+    "goToAccount": "Aller à mes téléchargements",
+    "failed": "Paiement non abouti",
+    "failedBody": "Le paiement n'a pas abouti, rien ne vous a été débité. Vous pouvez réessayer.",
+    "cancelled": "Paiement annulé",
+    "tryAgain": "Réessayer",
+    "backToCart": "Retour au panier",
+    "error": "Nous n'avons pas pu traiter le paiement. Merci de réessayer.",
+    "emailSent": "Un e-mail de confirmation est en route vers {email}.",
+    "guestNote": "Consultez votre boîte de réception pour votre reçu et vos liens de téléchargement.",
+    "email": "Adresse e-mail",
+    "emailHint": "Votre reçu et vos liens de téléchargement sont envoyés à cette adresse.",
+    "emailInvalid": "Veuillez saisir une adresse e-mail valide.",
+    "termsAccept": "J'accepte les Conditions de vente et la Politique de remboursement.",
+    "termsRequired": "Veuillez accepter les conditions pour continuer.",
+    "paypalUnavailable": "Le paiement n'est pas encore disponible. Réessayez dans un instant.",
+    "downloadReady": "Vos fichiers sont prêts",
+    "downloadPendingHint": "Les liens de téléchargement se débloquent dès que PayPal confirme le paiement.",
+    "securityNote": "Vous serez redirigé vers PayPal pour approuver le paiement, puis ramené ici.",
+    "lineItem": "Article",
+    "unitPrice": "Prix unitaire",
+    "quantityLabel": "Qté",
+    "lineTotal": "Total",
+    "applyPromo": "Code promo",
+    "invalidEmailHint": "Utilisez l'adresse avec laquelle vous vous êtes inscrit, pour garder votre bibliothèque au même endroit."
+  },
+  "account": {
+    "metaTitle": "Mon compte",
+    "title": "Mon compte",
+    "greeting": "Bonjour, {name}",
+    "nav": {
+      "overview": "Vue d'ensemble",
+      "orders": "Commandes",
+      "downloads": "Téléchargements",
+      "profile": "Profil"
+    },
+    "overview": {
+      "orders": "Commandes",
+      "books": "Livres possédés",
+      "spent": "Total dépensé",
+      "recent": "Commandes récentes"
+    },
+    "orders": {
+      "title": "Commandes",
+      "subtitle": "Toutes les commandes passées avec votre compte.",
+      "number": "Commande",
+      "date": "Date",
+      "items": "Articles",
+      "total": "Total",
+      "status": "Statut",
+      "download": "Télécharger",
+      "view": "Voir la commande",
+      "none": "Vous n'avez encore passé aucune commande.",
+      "noneCta": "Parcourir le catalogue",
+      "transactionId": "Référence PayPal"
+    },
+    "downloads": {
+      "title": "Mes téléchargements",
+      "subtitle": "Tous les titres que vous possédez, prêts à retélécharger à tout moment.",
+      "none": "Rien à télécharger pour le moment.",
+      "noneCta": "Trouver votre premier livre",
+      "ready": "Disponible",
+      "pending": "En attente de confirmation du paiement",
+      "download": "Télécharger",
+      "generating": "Préparation du lien…",
+      "expiresIn": "Le lien de téléchargement expire automatiquement, pour votre sécurité.",
+      "limited": "Vous avez utilisé {used} téléchargements sur {max} pour ce titre."
+    },
+    "profile": {
+      "title": "Profil",
+      "name": "Nom complet",
+      "email": "Adresse e-mail",
+      "memberSince": "Membre depuis",
+      "orders": "Commandes passées",
+      "save": "Enregistrer",
+      "saved": "Vos informations ont été enregistrées."
+    },
+    "status": {
+      "pending": "En attente",
+      "paid": "Payée",
+      "failed": "Échouée",
+      "refunded": "Remboursée",
+      "cancelled": "Annulée"
+    },
+    "signOut": "Se déconnecter"
+  },
+  "auth": {
+    "metaTitle": "Connexion",
+    "signInTitle": "Bon retour parmi nous",
+    "signInSubtitle": "Connectez-vous pour accéder à votre bibliothèque et à vos téléchargements.",
+    "signUpTitle": "Créez votre compte",
+    "signUpSubtitle": "Gardez tous vos achats au même endroit, pour toujours.",
+    "name": "Nom complet",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "passwordHint": "Au moins 8 caractères.",
+    "signIn": "Se connecter",
+    "signUp": "Créer un compte",
+    "noAccount": "Pas encore de compte ?",
+    "haveAccount": "Vous avez déjà un compte ?",
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetPassword": "Réinitialiser le mot de passe",
+    "resetSent": "Si cette adresse existe, un lien de réinitialisation est en route.",
+    "passwordUpdated": "Votre mot de passe a été mis à jour.",
+    "checkEmail": "Vérifiez vos e-mails",
+    "checkEmailBody": "Nous vous avons envoyé un lien de confirmation. Cliquez dessus pour activer votre compte.",
+    "errors": {
+      "invalidCredentials": "E-mail ou mot de passe incorrect.",
+      "emailTaken": "Un compte existe déjà avec cette adresse e-mail.",
+      "weakPassword": "Choisissez un mot de passe d'au moins 8 caractères.",
+      "generic": "Nous n'avons pas pu traiter cette demande. Merci de réessayer."
+    },
+    "benefits": {
+      "title": "Pourquoi créer un compte ?",
+      "library": "Une bibliothèque permanente de tout ce que vous achetez",
+      "redownload": "Retéléchargez vos fichiers sur n'importe quel appareil, à tout moment",
+      "reviews": "Donnez votre avis et notez les livres que vous lisez"
+    }
+  },
+  "admin": {
+    "metaTitle": "Administration",
+    "title": "Administration",
+    "unauthorized": "Accès administrateur requis",
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "books": "Livres",
+      "categories": "Catégories",
+      "orders": "Commandes",
+      "promos": "Codes promo",
+      "reviews": "Avis",
+      "import": "Import en masse",
+      "storefront": "Voir la boutique"
+    },
+    "dashboard": {
+      "title": "Tableau de bord",
+      "revenue": "Chiffre d'affaires",
+      "orders": "Commandes",
+      "books": "Titres",
+      "customers": "Clients",
+      "avgOrder": "Panier moyen",
+      "pending": "En attente",
+      "paid": "Payées",
+      "salesChart": "Ventes — 30 derniers jours",
+      "topBooks": "Meilleures ventes",
+      "recentOrders": "Commandes récentes",
+      "demoNotice": "Des livres de démonstration sont actuellement présents dans le catalogue."
+    },
+    "books": {
+      "title": "Livres",
+      "subtitle": "Créez, modifiez et publiez des titres.",
+      "new": "Nouveau livre",
+      "edit": "Modifier le livre",
+      "titleField": "Titre",
+      "author": "Auteur",
+      "slug": "Slug d'URL",
+      "category": "Catégorie",
+      "categories": "Catégories",
+      "price": "Prix (USD)",
+      "compareAtPrice": "Prix barré (USD)",
+      "language": "Langue",
+      "format": "Format",
+      "pages": "Pages",
+      "isbn": "ISBN",
+      "publishedAt": "Date de publication",
+      "excerpt": "Extrait",
+      "description": "Description",
+      "cover": "Image de couverture",
+      "coverHint": "JPG ou PNG, 600×900 px minimum, 4 Mo maximum.",
+      "pdf": "Fichier PDF",
+      "pdfHint": "C'est le fichier que les clients téléchargent après paiement.",
+      "isDemo": "Titre de démonstration (temporaire)",
+      "featured": "Mis en avant",
+      "active": "Publié",
+      "status": "Statut",
+      "sales": "Ventes",
+      "rating": "Note",
+      "delete": "Supprimer",
+      "deleteConfirm": "Supprimer définitivement ce livre ? Cette action est irréversible.",
+      "created": "Livre créé.",
+      "updated": "Livre mis à jour.",
+      "deleted": "Livre supprimé.",
+      "deleteBlocked": "Ce livre est rattaché à des commandes et ne peut pas être supprimé. Dépubliez-le plutôt.",
+      "uploadCover": "Envoyer la couverture",
+      "uploadPdf": "Envoyer le PDF",
+      "uploading": "Envoi…",
+      "missingPdf": "Aucun PDF envoyé",
+      "missingCover": "Aucune couverture",
+      "subtitleField": "Sous-titre"
+    },
+    "categories": {
+      "title": "Catégories",
+      "subtitle": "Organisez le catalogue.",
+      "new": "Nouvelle catégorie",
+      "name": "Nom",
+      "nameEn": "Nom (anglais)",
+      "nameFr": "Nom (français)",
+      "nameAr": "Nom (arabe)",
+      "slug": "Slug",
+      "description": "Description",
+      "position": "Position",
+      "delete": "Supprimer",
+      "deleteConfirm": "Supprimer cette catégorie ? Les livres doivent d'être déplacés.",
+      "created": "Catégorie créée.",
+      "updated": "Catégorie mise à jour.",
+      "deleted": "Catégorie supprimée.",
+      "deleteBlocked": "Cette catégorie contient encore des livres.",
+      "empty": "Aucune catégorie pour le moment."
+    },
+    "orders": {
+      "title": "Commandes",
+      "subtitle": "Suivez les paiements capturés via PayPal.",
+      "number": "Commande",
+      "customer": "Client",
+      "email": "E-mail",
+      "date": "Date",
+      "items": "Articles",
+      "total": "Total",
+      "paypalStatus": "Statut PayPal",
+      "transactionId": "Référence PayPal",
+      "status": "Statut",
+      "webhook": "Webhook",
+      "webhookConfirmed": "Confirmé",
+      "webhookPending": "En attente de confirmation",
+      "markPaid": "Marquer comme payée",
+      "markRefunded": "Marquer comme remboursée",
+      "updateStatus": "Mettre à jour le statut",
+      "details": "Détail de la commande",
+      "update": "Mettre à jour",
+      "note": "Note interne"
+    },
+    "promos": {
+      "title": "Codes promo",
+      "subtitle": "Codes de remise appliqués au paiement.",
+      "new": "Nouveau code promo",
+      "code": "Code",
+      "type": "Type",
+      "typePercent": "Pourcentage",
+      "typeFixed": "Montant fixe",
+      "value": "Valeur",
+      "minSubtotal": "Sous-total minimum (USD)",
+      "maxUses": "Utilisations maximum",
+      "uses": "Utilisations",
+      "startsAt": "Début",
+      "expiresAt": "Fin",
+      "active": "Actif",
+      "delete": "Supprimer",
+      "created": "Code promo créé.",
+      "updated": "Code promo mis à jour.",
+      "deleted": "Code promo supprimé."
+    },
+    "reviews": {
+      "title": "Avis",
+      "subtitle": "Modérez les avis des clients.",
+      "pending": "En attente",
+      "approved": "Approuvé",
+      "rejected": "Rejeté",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "rating": "Note",
+      "book": "Livre",
+      "author": "Auteur",
+      "none": "Aucun avis pour le moment."
+    },
+    "import": {
+      "title": "Import en masse de PDF",
+      "subtitle": "Envoyez un lot de PDF. Chaque fichier devient un livre brouillon que vous pourrez compléter et publier.",
+      "dropzone": "Déposez des fichiers PDF ici, ou cliquez pour parcourir",
+      "dropzoneHint": "PDF uniquement · 100 fichiers max · 40 Mo chacun",
+      "analyse": "Analyser les fichiers",
+      "analysing": "Lecture des fichiers…",
+      "import": "Importer en brouillons",
+      "importing": "Import en cours…",
+      "colFile": "Fichier",
+      "colSize": "Taille",
+      "colPages": "Pages",
+      "colStatus": "Statut",
+      "colTitle": "Titre proposé",
+      "preview": "Le titre proposé provient des métadonnées du PDF, que vous pourrez modifier après l'import.",
+      "imported": "{count, plural, =1 {1 livre importé} other {# livres importés}}",
+      "importFailed": "Le fichier n'a pas pu être importé.",
+      "duplicate": "Doublon possible",
+      "backupNote": "Rien n'est jamais supprimé : les fichiers et livres existants restent intacts."
+    },
+    "actions": {
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "cancel": "Annuler",
+      "add": "Ajouter",
+      "all": "Tous",
+      "none": "Aucun",
+      "confirm": "Confirmer",
+      "search": "Rechercher",
+      "actions": "Actions",
+      "total": "Total",
+      "filter": "Filtrer",
+      "selected": "sélectionné(s)"
+    }
+  },
+  "about": {
+    "metaTitle": "À propos",
+    "metaDescription": "Lumen Books est une librairie numérique indépendante. Découvrez notre histoire, notre sélection et notre façon de travailler.",
+    "title": "À propos de Lumen Books",
+    "lede": "Nous sommes une petite librairie indépendante, portés par une seule idée : les bons livres doivent être faciles à trouver, faciles à acheter et faciles à conserver.",
+    "story": {
+      "title": "Notre histoire",
+      "p1": "Lumen Books a commencé par un dossier de PDF échangés entre amis, et par une frustration : de formidables titres presque impossibles à acheter légalement, dans un format qui disparaissait dès que vous changiez d'appareil.",
+      "p2": "Aujourd'hui, nous sommes un catalogue volontairement restreint. Chaque titre est lu avant d'être mis en ligne. Nous travaillons directement avec des auteurs et des éditeurs indépendants, et nous gardons une sélection serrée plutôt que de courir après le volume.",
+      "p3": "Il n'y a pas d'abonnement ici. Vous achetez un livre, il est à vous, et il reste dans votre compte tant que nous existons."
+    },
+    "values": {
+      "title": "Nos convictions",
+      "items": {
+        "curation": {
+          "title": "La sélection avant le volume",
+          "description": "Cent livres que nous croyons valent mieux que dix mille autres."
+        },
+        "fairness": {
+          "title": "Juste envers les auteurs",
+          "description": "Les auteurs conservent leurs droits et une réelle part de chaque vente."
+        },
+        "access": {
+          "title": "Un accès sans friction",
+          "description": "Pas de mur de compte avant l'achat, pas de campagnes drip, pas de fausses pratiques."
+        },
+        "ownership": {
+          "title": "Ce que vous achetez est à vous",
+          "description": "Accès à vie, retéléchargeable, dans le format de votre choix."
+        }
+      }
+    },
+    "stats": {
+      "title": "En chiffres",
+      "titles": "Titres au catalogue",
+      "authors": "Auteurs indépendants soutenus",
+      "countries": "Pays desservis",
+      "languages": "Langues de lecture"
+    },
+    "cta": {
+      "title": "Commencez à lire",
+      "subtitle": "Le catalogue est ouvert et les fichiers sont prêts quand vous l'êtes."
+    }
+  },
+  "contact": {
+    "metaTitle": "Contact",
+    "metaDescription": "Contactez l'équipe Lumen Books. Nous répondons à chaque message sous un jour ouvré.",
+    "title": "Nous contacter",
+    "lede": "Une question sur une commande, un titre ou votre facture ? Envoyez-nous un message — une vraie personne vous répondra sous un jour ouvré.",
+    "form": {
+      "name": "Votre nom",
+      "email": "Adresse e-mail",
+      "order": "Numéro de commande (facultatif)",
+      "subject": "Objet",
+      "message": "Message",
+      "submit": "Envoyer le message",
+      "sending": "Envoi…",
+      "success": "Merci — votre message a bien été envoyé. Nous vous répondrons rapidement.",
+      "error": "Impossible d'envoyer votre message. Veuillez réessayer."
+    },
+    "channels": {
+      "title": "Autres façons de nous joindre",
+      "email": "E-mail",
+      "responseTime": "Délai de réponse",
+      "responseTimeValue": "Sous un jour ouvré",
+      "hours": "Horaires d'assistance",
+      "hoursValue": "Du lundi au vendredi, 09h00–17h00 UTC",
+      "languagesValue": "Français, anglais, arabe"
+    }
+  },
+  "faq": {
+    "metaTitle": "Questions fréquentes",
+    "metaDescription": "Réponses sur l'achat, le téléchargement, les formats, les remboursements et le paiement sur Lumen Books.",
+    "title": "Questions fréquentes",
+    "lede": "Tout ce que vous voudriez savoir avant d'acheter. Si ce n'est pas ici, envoyez-nous un message.",
+    "searchPlaceholder": "Rechercher une question…",
+    "noResults": "Aucune question ne correspond à votre recherche.",
+    "stillHaveQuestions": "Encore des questions ?",
+    "contactUs": "Contactez-nous",
+    "items": {
+      "format": {
+        "q": "Quels formats proposez-vous ?",
+        "a": "La plupart des titres sont disponibles en EPUB (liseuses, téléphones et tablettes) et en PDF (impression ou lecture sur ordinateur). Chaque fiche produit indique précisément les formats inclus. Si un titre est disponible dans les deux, vous recevez les deux fichiers."
+      },
+      "instant": {
+        "q": "Comment obtenir mes livres après le paiement ?",
+        "a": "Dès que PayPal confirme le paiement, vos liens de téléchargement se débloquent. Avec un compte, ils apparaissent aussi définitivement dans Mon compte → Téléchargements, pour les retélécharger sur n'importe quel appareil, à tout moment."
+      },
+      "paypal": {
+        "q": "Quels moyens de paiement acceptez-vous ?",
+        "a": "PayPal uniquement. Vous pouvez payer avec un solde PayPal, un compte bancaire associé ou une carte via PayPal. Nous ne recevons ni ne conservons vos données bancaires, et tous les paiements sont traités en dollars américains (USD)."
+      },
+      "account": {
+        "q": "Faut-il un compte pour acheter ?",
+        "a": "Non — le paiement fonctionne sans compte. Nous recommandons néanmoins d'en créer un pour que vos achats soient conservés et que vous puissiez retélécharger vos fichiers plus tard."
+      },
+      "devices": {
+        "q": "Puis-je lire sur plusieurs appareils ?",
+        "a": "Oui. Votre achat est lié à votre compte, pas à un appareil. Connectez-vous n'importe où et téléchargez à nouveau — il n'y a pas de limite d'appareils."
+      },
+      "refund": {
+        "q": "Quelle est votre politique de remboursement ?",
+        "a": "Comme il s'agit de fichiers numériques qui ne peuvent pas être retournés, un remboursement n'est accordé que si un fichier est corrompu, manquant ou ne correspond pas au titre commandé. Dans ce cas, nous remplaçons le fichier ou vous remboursons intégralement — contactez-nous avec votre numéro de commande."
+      },
+      "refundWindow": {
+        "q": "J'ai acheté par erreur, puis-je être remboursé ?",
+        "a": "Les achats numériques ne peuvent normalement pas être remboursés une fois les fichiers téléchargés : vérifiez bien le titre et le format avant de payer. Si quelque chose cloche réellement dans votre commande, nous l'examinerons toujours."
+      },
+      "security": {
+        "q": "Mon paiement est-il sécurisé ?",
+        "a": "Oui. Les paiements passent entièrement par PayPal et le navigateur est redirigé vers les serveurs PayPal pour approuver la transaction. Nous ne recevons qu'une confirmation de succès — jamais votre numéro de carte. Les téléchargements utilisent des liens signés à durée de vie courte."
+      },
+      "language": {
+        "q": "Le site est-il disponible dans d'autres langues ?",
+        "a": "Oui. Tout le site est disponible en anglais, en français et en arabe, et notre catalogue propose des titres en plusieurs langues."
+      },
+      "invoice": {
+        "q": "Émettez-vous des factures ou des reçus ?",
+        "a": "Oui. PayPal envoie votre reçu immédiatement après le paiement, et nous envoyons un e-mail de confirmation de Lumen Books contenant votre numéro de commande et vos liens de téléchargement."
+      },
+      "reader": {
+        "q": "Quelles applications de lecture recommandez-vous ?",
+        "a": "Toute application compatible avec les normes : Apple Books, Kobo, Calibre, Thorium, ou le lecteur EPUB intégré à votre téléphone. Les PDF s'ouvrent dans n'importe quel lecteur PDF."
+      },
+      "promo": {
+        "q": "Comment fonctionnent les codes promo ?",
+        "a": "Saisissez le code dans votre panier avant le paiement. Les codes valides sont appliqués immédiatement à votre sous-total. Chaque code a ses propres dates de validité et sa limite d'utilisation."
+      },
+      "bulk": {
+        "q": "Proposez-vous des licences en gros ou pour les équipes ?",
+        "a": "Oui, pour les organisations et l'enseignement. Utilisez le formulaire de contact en indiquant le nombre d'exemplaires souhaité."
+      }
+    }
+  },
+  "legal": {
+    "terms": {
+      "metaTitle": "Conditions de vente",
+      "metaDescription": "Les conditions applicables à l'achat de livres numériques chez Lumen Books.",
+      "title": "Conditions de vente",
+      "lastUpdated": "Dernière mise à jour : {date}",
+      "intro": "Ces conditions régissent l'achat de livres numériques auprès de Lumen Books. En validant votre commande, vous les acceptez.",
+      "sections": [
+        {
+          "title": "1. Qui sommes-nous",
+          "body": "Lumen Books (« le vendeur », « nous ») est une librairie numérique indépendante. Nous vendons des livres téléchargeables en direct, sans aucune expédition physique. Vous pouvez nous joindre à tout moment via le formulaire de contact ou par e-mail."
+        },
+        {
+          "title": "2. Ce que vous achetez",
+          "body": "Chaque fiche produit indique précisément les formats inclus (EPUB et/ou PDF) et la taille du fichier. Vous recevez une licence personnelle, non exclusive et non cessible de lire l'œuvre sur vos propres appareils. Vous ne pouvez ni revendre, ni partager, ni redistribuer, ni publier les fichiers, ni les utiliser pour entraîner des modèles d'apprentissage automatique."
+        },
+        {
+          "title": "3. Prix et devise",
+          "body": "Tous les prix sont en dollars américains (USD) et peuvent être modifiés sans préavis. Lorsque cela s'applique, les taxes ou droits sont calculés et perçus selon les règles de votre pays au moment du paiement. Un prix manifestement erroné ne nous engage pas : nous vous contactons et proposons le prix correct avant tout encaissement."
+        },
+        {
+          "title": "4. Paiement",
+          "body": "Le paiement est entièrement traité par PayPal. Nous ne recevons ni ne conservons votre numéro de carte. Une commande n'est considérée comme payée que lorsque PayPal nous a confirmé la transaction : vos liens de téléchargement s'ouvrent à cet instant précis, jamais avant."
+        },
+        {
+          "title": "5. Livraison",
+          "body": "La livraison est numérique et immédiate : dès la confirmation du paiement, les fichiers apparaissent sous Mon compte → Téléchargements (ou dans l'e-mail de téléchargement). Les liens sont des liens signés de courte durée ; c'est le compte, et non le lien, qui vous donne un accès permanent. Nous pouvons refuser ou annuler une livraison en cas de suspicion de fraude ou d'abus de rétrofacturation."
+        },
+        {
+          "title": "6. Comptes",
+          "body": "Un compte est facultatif pour acheter mais recommandé pour conserver vos achats. Vous êtes responsable de la confidentialité de vos identifiants et de tout ce qui est fait via votre compte. Vous pouvez demander la suppression de votre compte à tout moment ; les commandes que la loi comptable nous impose de conserver sont conservées sans identifiants personnels lorsque c'est possible."
+        },
+        {
+          "title": "7. Avis",
+          "body": "Vous pouvez déposer une note et un avis sur un livre acheté. Les avis sont modérés avant publication : nous supprimons le spam, les abus et tout ce qui est hors sujet. Nous ne modifions jamais le fond d'un avis au point d'en changer le sens."
+        },
+        {
+          "title": "8. Propriété intellectuelle",
+          "body": "Les titres vendus demeurent la propriété de leurs auteurs et éditeurs. Lumen Books détient les droits de diffusion du catalogue et possède la boutique, les couvertures qu'elle a produites et les descriptions éditoriales."
+        },
+        {
+          "title": "9. Disponibilité et responsabilité",
+          "body": "La boutique et le service de téléchargement sont fournis « tels quels » et « selon disponibilité ». Nous veillons à leur disponibilité mais ne pouvons garantir une interruption nulle. Notre responsabilité est limitée au prix payé pour la commande concernée, sauf si le droit de la consommation vous accorde davantage."
+        },
+        {
+          "title": "10. Remboursements",
+          "body": "Ces fichiers étant numériques, les remboursements suivent une politique dédiée : voir la page Politique de remboursement. Vos droits légaux de consommation restent inchangés."
+        },
+        {
+          "title": "11. Droit applicable",
+          "body": "Ces conditions sont régies par le droit applicable au siège du vendeur, sans exclure les protections impératives du consommateur dans votre pays de résidence. En cas de conflit, la règle la plus protectrice pour vous s'applique."
+        },
+        {
+          "title": "12. Modification des conditions",
+          "body": "Nous pouvons mettre à jour ce document selon l'évolution de la boutique. C'est la version publiée le jour de votre achat qui s'applique à cette commande."
+        }
+      ]
+    },
+    "privacy": {
+      "metaTitle": "Politique de confidentialité",
+      "metaDescription": "Comment Lumen Books collecte, utilise et protège vos données personnelles.",
+      "title": "Politique de confidentialité",
+      "lastUpdated": "Dernière mise à jour : {date}",
+      "intro": "Cette politique explique quelles données personnelles Lumen Books collecte, pourquoi, et ce que vous pouvez en faire.",
+      "sections": [
+        {
+          "title": "1. Responsable",
+          "body": "Lumen Books est responsable du traitement des données collectées sur cette boutique. Toute question se pose à l'adresse e-mail indiquée sur la page contact."
+        },
+        {
+          "title": "2. Données collectées",
+          "body": "Données de compte : votre e-mail et, si vous le définissez, votre nom affiché. Données de commande : numéro de commande, e-mail, titres achetés, montant et identifiant de transaction PayPal. Données techniques : votre adresse IP pour la limitation de débit et la prévention de la fraude, et les cookies strictement nécessaires (session, panier, langue, thème, consentement). Newsletter : votre e-mail et la date de votre consentement."
+        },
+        {
+          "title": "3. Données jamais collectées",
+          "body": "Nous ne voyons ni ne conservons vos données bancaires : le paiement se fait sur les serveurs de PayPal. Nous ne créons pas de profils publicitaires et ne vendons aucune donnée."
+        },
+        {
+          "title": "4. Finalités",
+          "body": "Exécuter le contrat : livrer les fichiers, fournir le compte et les téléchargements. Nos intérêts légitimes : sécuriser la boutique, prévenir la fraude et les abus, et comprendre quelles pages sont utiles de manière agrégée. Avec votre consentement : la newsletter et la mesure d'audience anonyme facultative. Vous pouvez retirer votre consentement à tout moment."
+        },
+        {
+          "title": "5. Destinataires",
+          "body": "Supabase (base de données, authentification et stockage), PayPal (paiement), Resend (e-mails transactionnels) et Vercel (hébergement). Chacun traite les données uniquement pour fournir son service. Aucun autre destinataire, aucune vente."
+        },
+        {
+          "title": "6. Durées de conservation",
+          "body": "Les pièces comptables sont conservées pendant la durée imposée par la loi fiscale et comptable. L'abonnement à la newsletter est conservé jusqu'à votre désinscription. Les compteurs de limitation sont conservés quelques heures. Les données de compte jusqu'à votre demande de suppression."
+        },
+        {
+          "title": "7. Vos droits",
+          "body": "Vous pouvez demander l'accès, la rectification, la suppression, la portabilité de vos données, vous opposer à certains usages ou retirer un consentement. Écrivez-nous : nous répondons sous trente jours. Vous pouvez aussi saisir l'autorité de protection des données de votre pays."
+        },
+        {
+          "title": "8. Cookies",
+          "body": "Les cookies strictement nécessaires (session, panier, sécurité, langue, thème, consentement) sont toujours actifs car la boutique ne fonctionne pas sans eux. Les cookies de mesure anonyme facultatifs ne sont déposés que si vous les acceptez dans le bandeau, que vous pouvez modifier à tout moment via le lien du pied de page."
+        },
+        {
+          "title": "9. Sécurité",
+          "body": "La base est protégée par sécurité au niveau des lignes, les fichiers vivent dans un bucket privé servis par des liens signés à durée limitée, et chaque endpoint sensible est limité. Aucun système n'est infaillible, mais vos données ne sont jamais traitées à la légère."
+        },
+        {
+          "title": "10. Enfants",
+          "body": "La boutique ne s'adresse pas aux enfants de moins de seize ans et nous ne collectons pas sciemment leurs données. Si vous pensez qu'un enfant nous a transmis des données, contactez-nous : nous les supprimons."
+        },
+        {
+          "title": "11. Transferts internationaux",
+          "body": "Nos prestataires traitent des données dans des pays autres que le vôtre, notamment aux États-Unis. Lorsque c'est nécessaire, les transferts reposent sur des clauses contractuelles types et des garanties équivalentes."
+        },
+        {
+          "title": "12. Modifications",
+          "body": "Toute modification est publiée sur cette page. Les changements importants concernant les clients existants sont annoncés par e-mail."
+        }
+      ]
+    },
+    "refund": {
+      "metaTitle": "Politique de remboursement",
+      "metaDescription": "Quand et comment les remboursements sont effectués pour les achats de livres numériques chez Lumen Books.",
+      "title": "Politique de remboursement",
+      "lastUpdated": "Dernière mise à jour : {date}",
+      "intro": "Ces livres sont des fichiers numériques qui ne peuvent pas être retournés. C'est pourquoi les remboursements sont rares, rapides et réservés aux vrais problèmes.",
+      "sections": [
+        {
+          "title": "1. Principe",
+          "body": "Une fois un fichier numérique téléchargé, il ne peut être ni retourné ni revendu : le remboursement pour simple changement d'avis est donc impossible. Remboursements et remplacements interviennent lorsqu'un problème réel affecte votre commande."
+        },
+        {
+          "title": "2. Cas de remboursement",
+          "body": "Le fichier est corrompu ou impossible à ouvrir. Le téléchargement est manquant ou échoue à répétition. Le titre reçu n'est pas celui commandé. Vous avez été débité deux fois pour la même commande. Un code promo ou une erreur de prix a été appliqué dans notre sens."
+        },
+        {
+          "title": "3. Notre première action",
+          "body": "Dans tous les cas, nous commençons par corriger la commande : nous ré-uplaodons le fichier ou envoyons le bon titre. Si c'est impossible dans un délai raisonnable, vous obtenez un remboursement intégral. Inutile d'en discuter deux fois."
+        },
+        {
+          "title": "4. Comment demander",
+          "body": "Écrivez-nous depuis l'adresse e-mail utilisée pour l'achat, avec votre numéro de commande et une ou deux phrases décrivant le problème. Nous répondons sous deux jours ouvrés."
+        },
+        {
+          "title": "5. Modalités de remboursement",
+          "body": "Le remboursement passe par PayPal vers le moyen de paiement d'origine et apparaît généralement sur votre relevé sous trois à dix jours ouvrés, selon votre banque. Nous ne remboursons jamais vers un autre compte et ne demandons jamais de données de carte."
+        },
+        {
+          "title": "6. Non remboursable",
+          "body": "Le changement d'avis après téléchargement. Un appareil ou une liseuse non compatible, lorsque les formats sont indiqués clairement avant l'achat. Les titres achetés à un prix promotionnel que vous avez accepté. Les commandes passées chez des revendeurs que nous ne contrôlons pas."
+        },
+        {
+          "title": "7. rétrofacturations",
+          "body": "Contactez-nous avant d'ouvrir un litige PayPal : la plupart se règlent plus vite et plus simplement en direct. Une rétrofacturation injustifiée peut entraîner une restriction du compte."
+        },
+        {
+          "title": "8. Remboursement partiel",
+          "body": "Si une commande contient plusieurs titres et qu'un seul est défectueux, nous remplaçons d'abord ce titre. Si le remplacement est impossible, nous remboursons la part proportionnelle de la commande."
+        },
+        {
+          "title": "9. Vos droits légaux",
+          "body": "Rien dans cette politique ne limite les droits impératifs du consommateur de votre pays, y compris le droit à réparation lorsqu'un produit numérique n'est pas conforme à sa description."
+        }
+      ]
+    },
+    "contact": "Toute question sur ce document : {email}",
+    "seller": {
+      "title": "Informations sur le vendeur",
+      "legalName": "Raison sociale",
+      "address": "Adresse du siège",
+      "registry": "Immatriculation",
+      "vat": "Numéro de TVA",
+      "country": "Pays d'immatriculation",
+      "governingLaw": "Droit applicable"
+    }
+  },
+  "footer": {
+    "tagline": "Des livres numériques indépendants, choisis avec soin et livrés instantanément.",
+    "shop": "Boutique",
+    "information": "Informations",
+    "legal": "Mentions légales",
+    "support": "Assistance",
+    "allBooks": "Tous les livres",
+    "newReleases": "Nouveautés",
+    "bestsellers": "Meilleures ventes",
+    "categories": "Catégories",
+    "about": "À propos",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "terms": "Conditions de vente",
+    "privacy": "Politique de confidentialité",
+    "refund": "Politique de remboursement",
+    "cookies": "Paramètres des cookies",
+    "rights": "© {year} Lumen Books. Tous droits réservés.",
+    "payments": "Paiements sécurisés par PayPal",
+    "currency": "Prix en USD"
+  },
+  "cookies": {
+    "title": "Votre vie privée, votre choix",
+    "body": "Nous utilisons uniquement des cookies strictement nécessaires au fonctionnement de la boutique (session, panier, sécurité). Avec votre accord, nous pourrions ajouter une mesure d'audience anonyme. Nous ne vendons jamais vos données.",
+    "acceptAll": "Tout accepter",
+    "rejectOptional": "Essentiels uniquement",
+    "learnMore": "En savoir plus dans notre politique de confidentialité",
+    "customise": "Personnaliser",
+    "settingsTitle": "Préférences de cookies",
+    "essential": "Strictement nécessaires",
+    "essentialDescription": "Nécessaires au panier, à la session de connexion et à la langue. Toujours actifs.",
+    "analytics": "Analyse anonyme",
+    "analyticsDescription": "Statistiques anonymes et agrégées qui nous aident à améliorer le catalogue.",
+    "saveSelection": "Enregistrer mon choix",
+    "close": "Fermer",
+    "rejectAll": "Essentiels uniquement",
+    "settings": "Gérer mes choix",
+    "save": "Enregistrer mon choix",
+    "essentialHint": "Indispensables pour la connexion, le panier et les téléchargements. Toujours actifs.",
+    "analyticsHint": "Nous aide à comprendre quelles pages sont utiles. Aucune donnée personnelle, aucune publicité."
+  }
+}

@@ -1,0 +1,13 @@
+# Normalise line endings: the repo is authored on Windows but built on Linux
+# (Vercel), where a stray CRLF can change nothing in JS yet breaks shell scripts
+# and SQL blocks executed through `psql`.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.pdf binary
+*.woff binary
+*.woff2 binary

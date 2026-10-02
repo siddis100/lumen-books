@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600" role="img" aria-label="Book cover placeholder">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f5efe4"/>
+      <stop offset="100%" stop-color="#e6dcc9"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="600" fill="url(#g)"/>
+  <rect x="0.5" y="0.5" width="399" height="599" fill="none" stroke="#d8ccb4"/>
+  <g fill="none" stroke="#b7a88c" stroke-width="4">
+    <rect x="120" y="200" width="160" height="200" rx="8"/>
+    <path d="M160 200v200"/>
+  </g>
+  <text x="200" y="450" text-anchor="middle" font-family="Georgia, serif" font-size="22" fill="#8d806a">Lumen Books</text>
+</svg>
