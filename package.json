@@ -15,7 +15,8 @@
     "db:migrate": "node scripts/migrate.mjs",
     "db:seed": "node scripts/migrate.mjs --seed",
     "selftest": "node scripts/selftest.mjs",
-    "selftest:clean": "node scripts/selftest.mjs --clean"
+    "selftest:clean": "node scripts/selftest.mjs --clean",
+    "import:book": "tsx scripts/import-book.ts"
   },
   "engines": {
     "node": ">=20.9.0"
