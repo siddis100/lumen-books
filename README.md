@@ -28,10 +28,43 @@ npm run dev                  # http://localhost:3000
 | `npm run db:migrate` | plan de migration (dry run) — ajouter `-- --apply` pour l'exécuter |
 | `npm run db:seed` | migration + `db/seed.sql` (démo) — ajouter `-- --apply` pour l'exécuter |
 | `npm run db:seed -- --seed-only` | recharge uniquement la démo, sur une base déjà migrée |
+| `npm run selftest` | 68 vérifications de l'argent et des accès, sur la vraie base et la vraie API (serveur requis) |
+| `npm run selftest:clean` | supprime les données de test laissées par un `selftest` interrompu |
 
 Le build **réussit même sans aucune variable d'environnement** : les pages
 restent rendues et le catalogue se dégrade en « vide mais fonctionnel ». Un
 déploiement Vercel ne peut donc jamais échouer pour cause de clé manquante.
+
+### `npm run selftest`
+
+`npm run check` prouve que le projet compile. Il ne prouve pas que les centimes
+s'additionnent, ni qu'un client ayant payé est le seul à pouvoir télécharger.
+Ces deux choses sont irréparables si elles sont fausses, et aucune n'est
+atteignable par un vérificateur de types : elles sont donc exercées sur du vrai
+HTTP contre la vraie base, avec le serveur de développement qui tourne
+(`npm run dev` dans un autre terminal).
+
+Ce que ça vérifie, en 68 assertions :
+
+- les totaux en centimes, y compris l'arrondi (1999 × 10 % doit tomber sur 200) ;
+- la remise WELCOME10 et son plancher de 1000 centimes ;
+- qu'un prix ou une quantité envoyé par le client est ignoré ;
+- que chaque motif de refus de code promo est rapporté tel quel, pour qu'un code
+  valide ne soit jamais accusé d'être invalide ;
+- qu'une requête refusée n'écrit aucune ligne dans `orders` ;
+- qu'un PDF n'est téléchargeable que par l'acheteur, et qu'un jeton forgé,
+  réécrit, expiré ou émis pour une autre commande est refusé en 404.
+
+Le script crée ses propres données (`zz-selftest-`) et les supprime à la sortie,
+y compris après un échec, parce qu'un catalogue ne doit jamais exposer des livres
+fictifs à un client. En cas d'interruption :
+
+```
+npm run selftest:clean
+```
+
+Il lit `DATABASE_URL` et `DOWNLOAD_LINK_SECRET` depuis `.env.local` sans jamais
+les afficher.
 
 ---
 

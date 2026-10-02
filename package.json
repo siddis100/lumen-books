@@ -13,7 +13,9 @@
     "env:check": "node scripts/check-env.mjs",
     "db:probe": "node scripts/probe-db.mjs",
     "db:migrate": "node scripts/migrate.mjs",
-    "db:seed": "node scripts/migrate.mjs --seed"
+    "db:seed": "node scripts/migrate.mjs --seed",
+    "selftest": "node scripts/selftest.mjs",
+    "selftest:clean": "node scripts/selftest.mjs --clean"
   },
   "engines": {
     "node": ">=20.9.0"
