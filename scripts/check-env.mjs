@@ -40,6 +40,16 @@ const EXPECTED = [
 const PLACEHOLDERS = new Set(["", "xxx", "changeme", "todo", "your-value-here"]);
 
 /**
+ * A secret whose value is still byte-identical to the one shipped in
+ * `.env.example` has not been filled in, whatever it looks like: the new
+ * Supabase keys are long random `sb_secret_…` tokens, so no regex can tell a
+ * real one from the sample. Equality with the example is the only reliable
+ * signal. Restricted to secrets so that a legitimately shared value (a dev
+ * origin like `http://localhost:3000`) is not reported as a problem.
+ */
+const SECRET_NAME = /(KEY|SECRET|PASSWORD|TOKEN)/;
+
+/**
  * Tokens left over from `.env.example`. A value can be non-empty and still be
  * unusable — `postgres://postgres.<REGION>:...` is the classic case.
  */
@@ -81,6 +91,9 @@ const sources = [".env.local", ".env", ".env.production"]
   .map((file) => parseDotEnv(path.join(ROOT, file)))
   .filter((map) => map.size > 0);
 
+/** The shipped template, used as the reference for "was this ever filled in?". */
+const template = parseDotEnv(path.join(ROOT, ".env.example"));
+
 /** Reads the live environment first, then the dotenv files. */
 function read(name) {
   const fromProcess = process.env[name];
@@ -102,12 +115,21 @@ const rows = EXPECTED.map(({ name, required, note }) => {
   } else if (INLINE.some((pattern) => pattern.test(value))) {
     // Non-empty, but still carries a token copied from `.env.example`.
     state = "incomplete";
+  } else if (SECRET_NAME.test(name) && template.get(name) === value) {
+    // A real-shaped secret that is still the sample shipped with the project.
+    state = "example";
   }
   return { name, required, note, state };
 });
 
 const pad = (value, width) => String(value).padEnd(width, " ");
-const LABEL = { ok: "OK", incomplete: "INCOMPLETE", placeholder: "PLACEHOLDER", absent: "ABSENT" };
+const LABEL = {
+  ok: "OK",
+  incomplete: "INCOMPLETE",
+  example: "EXAMPLE",
+  placeholder: "PLACEHOLDER",
+  absent: "ABSENT",
+};
 
 console.log(`\nLumen Books - environment check (${sources.length} dotenv file(s) read)\n`);
 for (const row of rows) {
@@ -119,6 +141,7 @@ for (const row of rows) {
 const blocking = rows.filter((row) => row.required && row.state !== "ok");
 const degraded = rows.filter((row) => !row.required && row.state !== "ok");
 const half = rows.filter((row) => row.state === "incomplete");
+const samples = rows.filter((row) => row.state === "example");
 
 console.log("");
 if (blocking.length === 0) {
@@ -133,6 +156,12 @@ if (half.length > 0) {
     `Still carrying a .env.example token: ${half.map((r) => r.name).join(", ")}`,
   );
   console.log("Those values look filled in but will fail at runtime.");
+}
+if (samples.length > 0) {
+  console.log(
+    `Still the value shipped in .env.example: ${samples.map((r) => r.name).join(", ")}`,
+  );
+  console.log("Supabase > Project Settings > API Keys, then paste the real secret here.");
 }
 if (degraded.length > 0) {
   console.log(`Optional features disabled: ${degraded.map((r) => r.name).join(", ")}`);
