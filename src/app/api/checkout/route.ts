@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
       returnUrl: `${base}/${locale}/checkout/success?order=${order.orderNumber}`,
       cancelUrl: `${base}/${locale}/checkout/cancelled`,
       customerEmail: user?.email ?? email,
+      locale,
     });
 
     await attachPayPalOrder(order.id, paypalOrder.id);

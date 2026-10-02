@@ -124,14 +124,30 @@ export type CreateOrderInput = {
   cancelUrl: string;
   /** Prefilled PayPal email for signed-in customers. */
   customerEmail?: string;
+  /** Store locale, mapped to a tag PayPal actually accepts. */
+  locale?: string;
 };
+
+/**
+ * PayPal validates `experience_context.locale` against a fixed list of BCP-47
+ * tags and rejects the whole order otherwise. Arabic is not in that list, so an
+ * `ar` shopper falls back to English rather than breaking the checkout. Keep
+ * this an allowlist: an unmapped tag costs an order, not a warning.
+ */
+function paypalLocale(locale: string | undefined): string {
+  return locale?.slice(0, 2).toLowerCase() === "fr" ? "fr-FR" : "en-US";
+}
 
 /**
  * Creates a PayPal order.
  *
- * `application_context` is used instead of the deprecated
- * `application_context.payment_method` so the buyer is taken straight to the
- * approval screen (best mobile conversion).
+ * No `payer` object is sent, which keeps the order in guest checkout: the buyer
+ * is not forced to sign in to PayPal and can settle with a card instead of a
+ * PayPal balance. That is what makes the checkout reachable from countries
+ * where PayPal accounts cannot send payments.
+ *
+ * `payment_source.paypal.experience_context` is the current shape; the older
+ * `application_context` is deprecated.
  */
 export async function createPayPalOrder(input: CreateOrderInput): Promise<PayPalOrderResponse> {
   const body = {
@@ -172,7 +188,7 @@ export async function createPayPalOrder(input: CreateOrderInput): Promise<PayPal
       paypal: {
         experience_context: {
           brand_name: "Lumen Books",
-          locale: "en-US",
+          locale: paypalLocale(input.locale),
           shipping_preference: "NO_SHIPPING",
           user_action: "PAY_NOW",
           return_url: input.returnUrl,
