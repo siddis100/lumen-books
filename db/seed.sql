@@ -83,7 +83,7 @@ from (values
   ('the-quiet-morning', 'The Quiet Morning',
    'Thirty days of attention', 'Hana Sato',
    'A gentle thirty-day practice around attention, sleep and screens. Demo record used to show the newest-releases ordering.',
-   'Le café était froid depuis longtemps. Je n'avais pas envie de le réchauffer.',
+   'Le café était froid depuis longtemps. Je n''avais pas envie de le réchauffer.',
    'self-help', 690, 890, 'fr', array['epub']::text[], 118, '2025-11-04', false),
 
   ('focus-is-a-skill', 'Focus Is a Skill',
@@ -92,16 +92,16 @@ from (values
    'Attention is not a personality trait. It is a capacity, and capacities respond to training.',
    'self-help', 590, null, 'en', array['epub']::text[], 104, '2026-01-22', false),
 
-  ('the-cartographers-tale', "The Cartographer's Tale",
+  ('the-cartographers-tale', 'The Cartographer''s Tale',
    'Two centuries of maps', 'Elena Ruiz',
    'How borders were drawn, redrawn and remembered. A historical record with a long title and a subtitle, used to check wrapping in three languages.',
    'Every border is an argument that someone eventually stopped having.',
    'history', 1390, 1790, 'en', array['epub','pdf']::text[], 356, '2024-10-01', true),
 
   ('des-livres-et-des-lisieres', 'Des livres et des lisières',
-   'Petite histoire de l'édition', 'Yann Le Goff',
-   'Une histoire courte de l'édition et des ateliers qui font le papier. Enregistrements de démonstration pour vérifier la mise en page des accents.',
-   "Le papier se choisissait à l'oreille avant de se choisir au prix.",
+'Petite histoire de l''édition', 'Yann Le Goff',
+    'Une histoire courte de l''édition et des ateliers qui font le papier. Enregistrements de démonstration pour vérifier la mise en page des accents.',
+   'Le papier se choisissait à l''oreille avant de se choisir au prix.',
    'history', 990, null, 'fr', array['epub']::text[], 190, '2025-08-09', false)
 ) as v(slug, title, subtitle, author, description, excerpt, category, price_cents, compare_at_cents, language, formats, pages, published_at, is_featured)
 join public.categories c on c.slug = v.category

@@ -79,7 +79,7 @@ export function MobileNav({
           {categoryLinks.length > 0 ? (
             <div className="mt-3 border-t pt-3">
               <p className="text-muted-foreground px-3 pb-1 text-xs font-semibold tracking-wider uppercase">
-                {tCatalog("filtersCategory")}
+                {tCatalog("category")}
               </p>
               {categoryLinks.map((link) => (
                 <Link

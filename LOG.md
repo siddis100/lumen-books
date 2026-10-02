@@ -686,3 +686,61 @@ renvoie 19/19 en 200.
 
 `npm run check` revalidé après les corrections : i18n + TypeScript + build
 (92 pages) verts.
+
+### Base de donnees reelle : migration appliquee et durcie
+
+Le projet Supabase existe (ref mask cote utilisateur, region eu-central-1,
+compute Nano, palier gratuit) et 
+pm run env:check sort enfin en 0.
+
+Piege majeur rencontre : le pooler ne s'appelle pas ws-0-<region> mais
+`aws-1-<region>`. Les 18 regions testees avec le prefixe ws-0 repondaient
+toutes 	enant/user not found, ce qui ressemble a une erreur de saisie ou a un
+probleme de provisionnement. La chaine de connexion officielle, seule source
+fiable, a tranche. Par ailleurs db.<ref>.supabase.co n'existe qu'en IPv6 :
+sans pooler, la connexion directe echoue depuis une boxIPv4, et Vercel en aurait
+besoin pour autant.
+
+**Faille de securite corrigee.** Un projet Supabase est cree avec
+*"Automatically expose new tables"*, ce qui accorde SELECT/INSERT/UPDATE/DELETE
+sur les 13 tables a non et uthenticated. La cle publishable voyage dans le
+bundle du navigateur : n'importe qui aurait donc pu lire via l'API publique les
+commandes, les e-mails clients, les codes promo et les liens de telechargement
+emis - les 6 tables orders, order_items, downloads, promo_codes,
+settings et ate_limits n'ont en effet aucune policy RLS. Verifie avant
+correction : src/ n'interroge jamais une table via la Data API (tout passe par
+Drizzle en service_role, supabase-js ne sert qu'a Auth et Storage), donc la
+correction ne casse rien.
+
+D'ou db/migrations/0001_lock_data_api.sql : REVOKE ALL sur non,
+uthenticated et PUBLIC pour les tables, sequences et fonctions, plus les
+ALTER DEFAULT PRIVILEGES correspondants pour que les tables futures ne soient
+pas re-exposees. Revérification apres application : **0 droit** restant sur le
+schema public, les 91 droits de service_role intacts. Les politiques RLS, deja
+correctes et restrictives (lecture des livres actifs, insertion seule pour les
+formulaires, avis approuves, profil et avis propres a l'utilisateur), restent en
+place comme second rempart.
+
+**scripts/migrate.mjs ameliore** : il applique tous les fichiers de
+db/migrations/ en ordre alphabetaque au lieu du seul  000_init.sql, sans quoi
+ 001 aurait ete ignore sur un futur deploiement. Ajout de --seed-only pour
+recharger la demo sur une base deja migree sans rejouer le schema.
+
+**Bug du seed** : trois apostrophes francaises non echappees cassaient
+db/seed.sql, et deux chaines etaient ecrites entre guillemets doubles - en
+SQL, "..." designe un identifiant, d'ou column "The Cartographer's Tale" does
+not exist. Corrige en ''.
+
+Etat verifie : 13 tables, 2 buckets (covers, pdfs), 5 categories, 12 livres
+de demonstration, code promo WELCOME10. Les pages /fr, /fr/books,
+/ar/books et une fiche livre renvoient 200 avec les titres lies en base.
+
+### Reste a faire pour cette etape
+
+- SUPABASE_SERVICE_ROLE_KEY est encore la valeur d'exemple. Elle est
+  indispensable pour le stockage, l'administration et la promotion en admin.
+  A saisir dans .env.local - jamais dans le chat.
+- Le mot de passe Postgres est passe par la conversation : **le faire tourner**
+  depuis *Project Settings > Database > Reset password* avant la mise en ligne.
+- DOWNLOAD_LINK_SECRET et les SELLER_* restent absents.
+- gh et ercel ne sont pas installes : le push et le deploiement attendent.

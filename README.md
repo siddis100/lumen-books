@@ -27,6 +27,7 @@ npm run dev                  # http://localhost:3000
 | `npm run db:probe` | teste la connexion Postgres (lecture seule) et dit si la migration est à appliquer |
 | `npm run db:migrate` | plan de migration (dry run) — ajouter `-- --apply` pour l'exécuter |
 | `npm run db:seed` | migration + `db/seed.sql` (démo) — ajouter `-- --apply` pour l'exécuter |
+| `npm run db:seed -- --seed-only` | recharge uniquement la démo, sur une base déjà migrée |
 
 Le build **réussit même sans aucune variable d'environnement** : les pages
 restent rendues et le catalogue se dégrade en « vide mais fonctionnel ». Un
@@ -42,11 +43,21 @@ Créer un projet, puis appliquer le schéma. Deux chemins possibles :
 
 - **Automatique** — renseigner `DATABASE_URL`, puis `npm run db:seed -- --apply`.
   Tout tourne dans une seule transaction : soit les tables, index, policies RLS
-  et buckets existent, soit rien n'a été créé. La commande refuse de tourner si
-  une table `orders` existe déjà.
+  et buckets existent, soit rien n'a été créé. Tous les fichiers de
+  `db/migrations/` sont appliqués **dans l'ordre alphabétique**, donc `0000_init.sql`
+  avant `0001_lock_data_api.sql`. La commande refuse de tourner si une table
+  `orders` existe déjà : utilisez alors `npm run db:seed -- --seed-only`.
 - **Manuel** — dans l'éditeur SQL, exécuter **dans l'ordre** :
-  `db/migrations/0000_init.sql` puis `db/seed.sql`. Les deux fichiers sont du
-  SQL standard, sans méta-commande `psql`.
+  `db/migrations/0000_init.sql`, `db/migrations/0001_lock_data_api.sql`, puis
+  `db/seed.sql`. Les fichiers sont du SQL standard, sans méta-commande `psql`.
+
+`0001_lock_data_api.sql` n'est pas optionnel. Un projet Supabase naît avec
+« Automatically expose new tables » activé, ce qui accorde `SELECT/INSERT/
+UPDATE/DELETE` sur **toutes** les tables à `anon` et `authenticated`. Comme la
+clé publishable est embarquée dans le navigateur, n'importe qui pourrait alors
+lire les commandes, les e-mails clients et les codes promo via l'API publique.
+La migration retire ces droits. L'application n'en a pas besoin : elle passe par
+Drizzle en `service_role` et n'utilise `supabase-js` que pour Auth et Storage.
 
 `db/seed.sql` contient 5 catégories, 12 livres de démonstration et le code promo
 `WELCOME10`. Idempotent (`on conflict do nothing`), donc sans risque.
@@ -132,12 +143,13 @@ facture jamais un titre sans fichier.
 
 ```
 db/
-├── migrations/0000_init.sql   schéma + RLS + buckets
-└── seed.sql                   catalogue de démonstration
+├── migrations/0000_init.sql        schéma + RLS + buckets
+├── migrations/0001_lock_data_api.sql  retire l'exposition publique de la Data API
+└── seed.sql                        catalogue de démonstration
 scripts/
 ├── check-env.mjs              variables manquantes, sans afficher les valeurs
 ├── probe-db.mjs               connexion Postgres en lecture seule
-├── migrate.mjs                applique le SQL (--apply, --seed)
+├── migrate.mjs                applique le SQL (--apply, --seed, --seed-only)
 ├── i18n-audit.mjs             parité des clés entre en / fr / ar
 └── patch-messages.mjs         ajout de clés i18n dans les 3 locales
 src/

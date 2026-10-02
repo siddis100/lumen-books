@@ -28,8 +28,11 @@ function parseDotEnv(file) {
 }
 
 const env = { ...parseDotEnv(".env.local"), ...parseDotEnv(".env"), ...process.env };
-const apply = process.argv.includes("--apply");
-const withSeed = process.argv.includes("--seed");
+// --seed-only reloads db/seed.sql on a database that is already migrated,
+// without replaying 0000_init.sql.
+const seedOnly = process.argv.includes("--seed-only");
+const apply = process.argv.includes("--apply") || seedOnly;
+const withSeed = process.argv.includes("--seed") || seedOnly;
 
 const url = env.DATABASE_URL;
 if (!url) {
@@ -46,7 +49,7 @@ for (const token of ["REGION", "YOUR_", "<"]) {
   }
 }
 
-const MIGRATION = "db/migrations/0000_init.sql";
+const MIGRATIONS_DIR = "db/migrations";
 const SEED = "db/seed.sql";
 const sqlText = (file) => {
   if (!fs.existsSync(file)) {
@@ -56,11 +59,29 @@ const sqlText = (file) => {
   return fs.readFileSync(file, "utf8");
 };
 
+// Applied in filename order, so 0000_init.sql always comes before 0001_lock_data_api.sql.
+const migrationFiles = fs
+  .readdirSync(MIGRATIONS_DIR)
+  .filter((name) => name.endsWith(".sql"))
+  .sort();
+
 const countStatements = (text) => text.split(/;\s*\n/).length - 1;
-const migrationSql = sqlText(MIGRATION);
+const migrations = seedOnly
+  ? []
+  : fs
+      .readdirSync(MIGRATIONS_DIR)
+      .filter((name) => name.endsWith(".sql"))
+      .sort()
+      .map((name) => ({ file: `${MIGRATIONS_DIR}/${name}`, sql: sqlText(`${MIGRATIONS_DIR}/${name}`) }));
 
 console.log(`\nLumen Books - database migration`);
-console.log(`  ${MIGRATION}: ${migrationSql.split("\n").length} lines, ~${countStatements(migrationSql)} statements`);
+if (seedOnly) {
+  console.log(`  (--seed-only: migrations skipped)`);
+} else {
+  for (const m of migrations) {
+    console.log(`  ${m.file}: ${m.sql.split("\n").length} lines, ~${countStatements(m.sql)} statements`);
+  }
+}
 if (withSeed) {
   console.log(`  ${SEED}: demo catalogue (5 categories, 12 books, promo WELCOME10)`);
 } else {
@@ -76,22 +97,28 @@ const { default: postgres } = await import("postgres");
 const sql = postgres(url, { connect_timeout: 15, max: 1, ssl: "require" });
 
 try {
-  const existing = await sql`
-    select count(*)::int as count from information_schema.tables
-    where table_schema = 'public' and table_name = 'orders'
-  `;
-  if (existing[0].count > 0) {
-    console.error(
-      "\nA public `orders` table already exists. Refusing to run the migration again:",
-    );
-    console.error("  it would fail halfway and, inside a transaction, roll everything back.");
-    console.error("  If you really want a clean slate, drop the public schema in the Supabase SQL editor first.\n");
-    process.exit(1);
+  if (!seedOnly) {
+    const existing = await sql`
+      select count(*)::int as count from information_schema.tables
+      where table_schema = 'public' and table_name = 'orders'
+    `;
+    if (existing[0].count > 0) {
+      console.error(
+        "\nA public `orders` table already exists. Refusing to run the migration again:",
+      );
+      console.error("  it would fail halfway and, inside a transaction, roll everything back.");
+      console.error("  If you really want a clean slate, drop the public schema in the Supabase SQL editor first.");
+      console.error("  To only reload the demo catalogue, use: npm run db:seed -- --seed-only\n");
+      process.exit(1);
+    }
   }
 
-  console.log("\nApplying migration in a single transaction...");
+  console.log(seedOnly ? "\nLoading the demo catalogue..." : "\nApplying migrations in a single transaction...");
   await sql.begin(async (tx) => {
-    await tx.unsafe(migrationSql);
+    for (const m of migrations) {
+      console.log(`  -> ${m.file}`);
+      await tx.unsafe(m.sql);
+    }
     if (withSeed) await tx.unsafe(sqlText(SEED));
   });
   console.log("Done.");
