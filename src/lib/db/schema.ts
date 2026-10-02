@@ -109,7 +109,7 @@ export const books = pgTable(
     isDemo: boolean("is_demo").notNull().default(false),
 
     salesCount: integer("sales_count").notNull().default(0),
-    ratingAvg: numeric("rating_avg", { precision: 3, scale: 2 }).notNull().default("0"),
+    ratingAvg: numeric("rating_avg", { precision: 5, scale: 2 }).notNull().default("0"),
     ratingCount: integer("rating_count").notNull().default(0),
 
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -148,7 +148,7 @@ export const orders = pgTable(
     paypalOrderId: text("paypal_order_id"),
     paypalCaptureId: text("paypal_capture_id"),
     paypalStatus: text("paypal_status"),
-    paypalPayerEmail: text("payer_email"),
+    paypalPayerEmail: text("paypal_payer_email"),
     /** Set only once PAYMENT.CAPTURE.COMPLETED has been verified via webhook. */
     webhookConfirmedAt: timestamp("webhook_confirmed_at", { withTimezone: true }),
     paidAt: timestamp("paid_at", { withTimezone: true }),

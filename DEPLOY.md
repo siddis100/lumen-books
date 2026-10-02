@@ -91,9 +91,6 @@ Sans domaine, le site reste accessible uniquement sur `*.netlify.app`.
 
 ## 5. Dette technique connue
 
-- `orders.paypal_payer_email` (SQL) vs `"payer_email"` (Drizzle, `src/lib/db/schema.ts:151`)
-  — toute lecture de cette colonne échoue. À aligner avant la première vente.
-- `rating_avg numeric(5,2)` (SQL) vs `numeric(3,2)` (Drizzle).
 - `/api/cron/expire-links` est documenté dans `.env.example` mais n'a jamais été écrit.
   `listOrdersAwaitingWebhook` (`src/lib/orders.ts:361`) est du code mort.
 - `src/app/api/health/route.ts` ne renvoie que `{status}` ; à supprimer en production.

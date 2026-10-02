@@ -278,11 +278,14 @@ export type OrderWithLines = NonNullable<Awaited<ReturnType<typeof getOrderById>
   items: (typeof orderItems.$inferSelect)[];
 };
 
+/** Canonical UUID shape, so a reference is never mistaken for a human order number. */
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /** Order lookup used by the success page: by internal id or human reference. */
 export async function findOrder(reference: string): Promise<OrderWithLines | null> {
-  const order = reference.includes("-")
-    ? await getOrderByNumber(reference.toUpperCase())
-    : await getOrderById(reference);
+  const order = UUID_RE.test(reference)
+    ? await getOrderById(reference)
+    : await getOrderByNumber(reference.toUpperCase());
   if (!order) return null;
   return { ...order, items: await getOrderItems(order.id) };
 }
