@@ -10,18 +10,18 @@
 const FALLBACK_COVER = "/images/cover-placeholder.svg";
 
 /**
- * `cover_path` holds the key inside the public bucket (`covers/<slug>.<ext>`),
- * not a URL. Nothing serves that path from the site itself, so it has to be
- * expanded into the bucket's public endpoint.
+ * `cover_path` holds the storage key inside the public `covers` bucket
+ * (`covers/<slug>.<ext>`). It is served back through our own `/api/cover`
+ * route instead of straight from Supabase's public-delivery endpoint, which
+ * answers `404 Object not found` to browsers for objects it demonstrably has —
+ * see the route's comment.
  */
 export function coverUrl(path: string | null | undefined): string {
   if (!path) return FALLBACK_COVER;
   if (/^https?:\/\//.test(path)) return path;
 
   const key = path.replace(/^\/+/, "");
-  const base = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/+$/, "");
-  if (!base) return `/${key}`;
-  return `${base}/storage/v1/object/public/${key}`;
+  return `/api/cover?path=${encodeURIComponent(key)}`;
 }
 
 export { FALLBACK_COVER };

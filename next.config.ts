@@ -59,10 +59,12 @@ const nextConfig: NextConfig = {
         pathname: "/storage/v1/object/public/**",
       },
     ],
-    // Covers are served straight from the Supabase CDN (see src/lib/image-loader.ts),
-    // local assets still go through the optimizer.
-    loader: "custom",
-    loaderFile: "./src/lib/image-loader.ts",
+    // `/_next/image` answers `400` to browsers on this deployment while
+    // serving the same URLs fine to non-browser clients, and the only local
+    // asset is a 711-byte placeholder SVG that has nothing to optimise. Raw
+    // sources are served by the platform CDN instead; covers come from
+    // /api/cover (see src/app/api/cover/route.ts).
+    unoptimized: true,
     formats: ["image/avif", "image/webp"],
     deviceSizes: [360, 480, 640, 768, 1024, 1280, 1536, 1920],
     imageSizes: [64, 96, 128, 200, 256, 320],
