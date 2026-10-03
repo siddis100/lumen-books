@@ -16,6 +16,11 @@ export const dynamic = "force-dynamic";
  * So the bytes come through here instead: same origin, no ORB, no CORS, and a
  * CDN cacheable response on our own domain. The signed URL is short-lived and
  * never leaves the server.
+ *
+ * The storage key travels in the URL *path*, not the query string: Netlify's
+ * CDN does not key its cache on query parameters, so `?path=a` and `?path=b`
+ * would share one cache entry and every request would get whichever cover was
+ * cached first.
  */
 
 /** Only these extensions can be requested; a cover is never anything else. */
@@ -26,28 +31,32 @@ const SIGNED_URL_TTL_SECONDS = 120;
 
 const NOT_FOUND = () => new Response("Not found", { status: 404 });
 
-export async function GET(request: Request) {
-  const path = new URL(request.url).searchParams.get("path") ?? "";
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ key: string[] }> },
+) {
+  const { key: segments } = await params;
+  const key = segments.join("/");
 
   // `cover_path` is a storage key, never user input: reject anything that could
   // walk out of the bucket (`..`), address another bucket, or be a non-image.
-  if (!path.startsWith(`${COVERS_BUCKET}/`) || path.includes("..") || !ALLOWED_EXT.test(path)) {
+  if (!key.startsWith(`${COVERS_BUCKET}/`) || key.includes("..") || !ALLOWED_EXT.test(key)) {
     return NOT_FOUND();
   }
 
   try {
     const signed = await createAdminClient()
       .storage.from(COVERS_BUCKET)
-      .createSignedUrl(path, SIGNED_URL_TTL_SECONDS);
+      .createSignedUrl(key, SIGNED_URL_TTL_SECONDS);
 
     if (signed.error || !signed.data?.signedUrl) {
-      console.error("[cover] signed url failed:", path, signed.error?.message);
+      console.error("[cover] signed url failed:", key, signed.error?.message);
       return NOT_FOUND();
     }
 
     const upstream = await fetch(signed.data.signedUrl, { cache: "no-store" });
     if (!upstream.ok || !upstream.body) {
-      console.error("[cover] upstream failed:", path, upstream.status);
+      console.error("[cover] upstream failed:", key, upstream.status);
       return NOT_FOUND();
     }
 
