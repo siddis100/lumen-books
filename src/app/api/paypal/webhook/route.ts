@@ -3,6 +3,7 @@ import { verifyWebhookSignature } from "@/lib/paypal";
 import {
   confirmOrderPayment,
   findOrder,
+  findOrderByPaypalId,
   markOrderEmailed,
   OrderError,
   toConfirmationEmail,
@@ -23,6 +24,8 @@ export const dynamic = "force-dynamic";
  * replayed events all end as `ignored`, which PayPal treats as a 200.
  */
 
+type CaptureAmount = { currency_code?: string; value?: string };
+
 type WebhookEvent = {
   id?: string;
   event_type?: string;
@@ -30,19 +33,21 @@ type WebhookEvent = {
     id?: string;
     status?: string;
     custom_id?: string;
+    reference_id?: string;
     invoice_id?: string;
     payer_email?: string;
+    amount?: CaptureAmount;
     supplementary_data?: { related_ids?: { order_id?: string } };
     purchase_units?: {
       custom_id?: string;
       reference_id?: string;
       invoice_id?: string;
-      amount?: { currency_code?: string; value?: string };
+      amount?: CaptureAmount;
       payments?: {
         captures?: {
           id?: string;
           status?: string;
-          amount?: { currency_code?: string; value?: string };
+          amount?: CaptureAmount;
         }[];
       };
     }[];
@@ -72,12 +77,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, handled: false, reason: "ignored_event" });
   }
 
+  // PayPal documents `PAYMENT.CAPTURE.COMPLETED` with the capture itself as the
+  // resource: `id`, `status` and `amount` sit at the top level and there is no
+  // `purchase_units`. Alternate shapes nest the capture under the purchase unit,
+  // so both are accepted, top level first.
   const unit = event.resource?.purchase_units?.[0];
-  const capture = unit?.payments?.captures?.[0];
-  const orderId =
-    unit?.custom_id ?? unit?.reference_id ?? event.resource?.supplementary_data?.related_ids?.order_id;
+  const nestedCapture = unit?.payments?.captures?.[0];
+  const capture = event.resource?.id && event.resource?.amount ? event.resource : nestedCapture;
 
-  if (!orderId || !capture?.id) {
+  // `custom_id` is not part of the documented capture payload, so the order
+  // number and the PayPal order id are kept as fallbacks rather than relying on
+  // it alone.
+  const reference =
+    event.resource?.custom_id ??
+    unit?.custom_id ??
+    event.resource?.reference_id ??
+    unit?.reference_id ??
+    event.resource?.invoice_id ??
+    unit?.invoice_id;
+  const paypalOrderId = event.resource?.supplementary_data?.related_ids?.order_id;
+  const origin = reference ?? paypalOrderId ?? "unknown";
+
+  if (!capture?.id || (!reference && !paypalOrderId)) {
     return NextResponse.json({ ok: true, handled: false, reason: "missing_reference" });
   }
   if (capture.status !== "COMPLETED") {
@@ -87,13 +108,15 @@ export async function POST(request: NextRequest) {
   // Fail closed: a capture without a currency is not a USD capture.
   if (capture.amount?.currency_code !== "USD") {
     console.error(
-      `[paypal-webhook] unexpected currency ${capture.amount?.currency_code ?? "missing"} on order ${orderId}`,
+      `[paypal-webhook] unexpected currency ${capture.amount?.currency_code ?? "missing"} on order ${origin}`,
     );
     return NextResponse.json({ ok: true, handled: false, reason: "currency_mismatch" });
   }
 
   try {
-    const record = await findOrder(orderId);
+    const record =
+      (reference ? await findOrder(reference) : null) ??
+      (paypalOrderId ? await findOrderByPaypalId(paypalOrderId) : null);
     if (!record) return NextResponse.json({ ok: true, handled: false, reason: "unknown_order" });
 
     // Compare in cents to avoid float drift. A missing or unparsable amount is a

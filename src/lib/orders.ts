@@ -291,6 +291,20 @@ export async function findOrder(reference: string): Promise<OrderWithLines | nul
 }
 
 /**
+ * Order lookup by the PayPal order id we stored.
+ *
+ * A `PAYMENT.CAPTURE.COMPLETED` event only guarantees the PayPal order id, in
+ * `resource.supplementary_data.related_ids.order_id`; `custom_id` is not part of
+ * the documented capture payload. The webhook therefore needs this third way in.
+ */
+export async function findOrderByPaypalId(paypalOrderId: string): Promise<OrderWithLines | null> {
+  const rows = await db.select().from(orders).where(eq(orders.paypalOrderId, paypalOrderId)).limit(1);
+  const order = rows[0];
+  if (!order) return null;
+  return { ...order, items: await getOrderItems(order.id) };
+}
+
+/**
  * Idempotent transition to `paid`.
  *
  * Called from the capture route *and* from the webhook. Whichever arrives
