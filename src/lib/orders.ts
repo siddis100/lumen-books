@@ -325,12 +325,37 @@ export async function confirmOrderPayment(input: {
   const existing = await findOrder(input.orderId);
   if (!existing) throw new OrderError("not_found");
 
+  const now = input.paidAt ?? new Date();
+
   if (existing.status === "paid" || existing.status === "refunded") {
-    // Already settled: never touch `paidAt` again.
-    return { changed: false, order: existing };
+    // Already settled: `paidAt` is never touched again. A webhook landing after
+    // the capture route must still record its confirmation though — the capture
+    // route always wins that race, because the buyer is redirected to the success
+    // page immediately — otherwise the confirmation never goes out and the
+    // downloads stay locked for good.
+    const recoverable =
+      existing.status === "paid" && input.webhookConfirmed && !existing.webhookConfirmedAt;
+    if (!recoverable) return { changed: false, order: existing };
+
+    const [confirmed] = await db
+      .update(orders)
+      .set({ webhookConfirmedAt: now, updatedAt: now })
+      .where(and(eq(orders.id, input.orderId), sql`${orders.webhookConfirmedAt} is null`))
+      .returning();
+
+    if (confirmed && existing.promoCode) {
+      await db
+        .update(promoCodes)
+        .set({ usedCount: sql`${promoCodes.usedCount} + 1` })
+        .where(eq(promoCodes.code, existing.promoCode));
+    }
+
+    return {
+      changed: Boolean(confirmed),
+      order: { ...(confirmed ?? existing), items: await getOrderItems(input.orderId) },
+    };
   }
 
-  const now = input.paidAt ?? new Date();
   const [updated] = await db
     .update(orders)
     .set({
