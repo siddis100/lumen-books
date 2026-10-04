@@ -399,6 +399,20 @@ export async function markOrderEmailed(orderId: string): Promise<boolean> {
   return Boolean(updated);
 }
 
+/**
+ * Hands the confirmation-email claim back after a failed send.
+ *
+ * `markOrderEmailed` is what stops a replayed PayPal event from mailing the
+ * customer twice, but if the claim outlives a send that never happened the order
+ * looks permanently delivered and no retry can ever reach them.
+ */
+export async function releaseOrderEmail(orderId: string): Promise<void> {
+  await db
+    .update(orders)
+    .set({ emailedAt: null })
+    .where(and(eq(orders.id, orderId), sql`${orders.emailedAt} is not null`));
+}
+
 /** Orders still waiting for a PayPal webhook, used by the maintenance endpoint. */
 export async function listOrdersAwaitingWebhook(limit = 50) {
   return db

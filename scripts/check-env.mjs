@@ -6,6 +6,13 @@
  *
  * A variable left at the `xxx` placeholder copied from `.env.example` counts as
  * missing, because that is exactly what it is.
+ *
+ * Exit code is non-zero when a required variable is unusable, when a cross
+ * variable rule is violated, or when a `critical` variable is unusable.
+ * `critical` exists because "optional" is the wrong word for the email
+ * variables: leaving Resend unset only removes a feature, leaving it set to a
+ * placeholder silently drops every order confirmation and every guest download
+ * link while the site reports itself healthy.
  */
 
 import fs from "node:fs";
@@ -13,7 +20,11 @@ import path from "node:path";
 
 const ROOT = process.cwd();
 
-/** `required` blocks the deploy; `optional` only downgrades a feature. */
+/**
+ * `required` blocks the deploy. `critical` blocks it too, but for variables
+ * that must never be a placeholder: a build can succeed with a broken email
+ * sender and the failure only shows up after a real payment.
+ */
 const EXPECTED = [
   { name: "NEXT_PUBLIC_SITE_URL", required: true, note: "public origin, e.g. https://lumenbooks.store" },
   { name: "NEXT_PUBLIC_SUPABASE_URL", required: true, note: "read by the browser for auth" },
@@ -29,9 +40,9 @@ const EXPECTED = [
   { name: "NEXT_PUBLIC_PAYPAL_CLIENT_ID", required: false, note: "same value as PAYPAL_CLIENT_ID" },
   { name: "NEXT_PUBLIC_PAYPAL_ENV", required: false, note: "same value as PAYPAL_ENV" },
   { name: "PAYPAL_WEBHOOK_ID", required: false, note: "only after the site is deployed" },
-  { name: "RESEND_API_KEY", required: false, note: "order and contact emails" },
-  { name: "EMAIL_FROM", required: false, note: "verified sender" },
-  { name: "CONTACT_EMAIL", required: false, note: "shown in the footer" },
+  { name: "RESEND_API_KEY", required: false, critical: true, note: "order and contact emails" },
+  { name: "EMAIL_FROM", required: false, critical: true, note: "verified sender" },
+  { name: "CONTACT_EMAIL", required: false, critical: true, note: "shown in the footer" },
   { name: "SELLER_NAME", required: false, note: "legal pages" },
   { name: "SELLER_ADDRESS", required: false, note: "lines separated by \\n" },
   { name: "SELLER_GOVERNING_LAW", required: false, note: "legal pages" },
@@ -124,6 +135,15 @@ const INLINE = [
   /\bx{3,}\b/i,
   /replace-?me/i,
   /example\.(com|org|net)/i,
+  // `re_xxx` is the shipped sample and `\bx{3,}\b` cannot see it, because `_` is
+  // a word character and so there is no boundary before the run of x. Anchor on
+  // the provider prefix instead, which no real Resend key can match: those are
+  // `re_` followed by 32 mixed-case alphanumerics.
+  /^re_[x*]+$/i,
+  // `orders@yourdomain.com` is a syntactically valid address on a domain nobody
+  // owns, and `\byour\b` misses it too, because `yourdomain` is a single word.
+  // This is the exact value that shipped in `.env.example`.
+  /yourdomain/i,
 ];
 
 function parseDotEnv(file) {
@@ -165,7 +185,7 @@ function read(name) {
   return undefined;
 }
 
-const rows = EXPECTED.map(({ name, required, note }) => {
+const rows = EXPECTED.map(({ name, required, critical, note }) => {
   const value = read(name);
   let state = "ok";
   if (value === undefined) {
@@ -179,7 +199,7 @@ const rows = EXPECTED.map(({ name, required, note }) => {
     // A real-shaped secret that is still the sample shipped with the project.
     state = "example";
   }
-  return { name, required, note, state };
+  return { name, required, critical, note, state };
 });
 
 const pad = (value, width) => String(value).padEnd(width, " ");
@@ -193,8 +213,9 @@ const LABEL = {
 
 console.log(`\nLumen Books - environment check (${sources.length} dotenv file(s) read)\n`);
 for (const row of rows) {
+  const weight = row.required ? "required" : row.critical ? "critical" : "optional";
   console.log(
-    `${pad(LABEL[row.state], 12)} ${pad(row.name, 32)} ${row.required ? "required" : "optional"}  ${row.note}`,
+    `${pad(LABEL[row.state], 12)} ${pad(row.name, 32)} ${pad(weight, 9)} ${row.note}`,
   );
 }
 
@@ -246,8 +267,46 @@ for (const name of ["EMAIL_FROM", "CONTACT_EMAIL"]) {
   }
 }
 
+/**
+ * A development origin is legitimate in `.env.local` and fatal everywhere else.
+ * `NEXT_PUBLIC_SITE_URL` is baked into the browser bundle, so a deploy that
+ * keeps `http://localhost:3000` points every payment redirect and every emailed
+ * download link at the customer's own machine. Only the process environment is
+ * judged, because that is the one a deploy actually serves, and `localhost` is
+ * the correct value during local development.
+ */
+const deployedSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+if (
+  deployedSiteUrl !== undefined &&
+  /^(https?:\/\/)?(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/i.test(deployedSiteUrl.trim())
+) {
+  problem(
+    "NEXT_PUBLIC_SITE_URL points at a development origin " +
+      `(${deployedSiteUrl.length} characters found). ` +
+      "A deploy must serve its real https origin: this value is compiled into the " +
+      "browser bundle, so payment redirects and emailed download links would resolve " +
+      "to localhost on the customer's machine.",
+  );
+}
+
+/**
+ * A confirmation email that was never sent leaves a paid customer with no
+ * download link. The site still looks healthy — the build passes, the checkout
+ * works — so the sender configuration has to be treated as a deploy blocker
+ * rather than as a missing feature.
+ */
+const criticalRows = rows.filter((row) => row.critical && row.state !== "ok");
+if (criticalRows.length > 0) {
+  problem(
+    `Unusable email configuration: ${criticalRows.map((r) => r.name).join(", ")}. ` +
+      "Every order confirmation carries the download links, so with these values the " +
+      "store takes payment and mails nothing. Create a real Resend API key and a " +
+      "verified sending domain, then redeploy.",
+  );
+}
+
 const blocking = rows.filter((row) => row.required && row.state !== "ok");
-const degraded = rows.filter((row) => !row.required && row.state !== "ok");
+const degraded = rows.filter((row) => !row.required && !row.critical && row.state !== "ok");
 const half = rows.filter((row) => row.state === "incomplete");
 const samples = rows.filter((row) => row.state === "example");
 

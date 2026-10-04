@@ -6,6 +6,7 @@ import {
   findOrderByPaypalId,
   markOrderEmailed,
   OrderError,
+  releaseOrderEmail,
   toConfirmationEmail,
 } from "@/lib/orders";
 import { notifyNewOrder, sendOrderConfirmation } from "@/lib/email";
@@ -140,14 +141,25 @@ export async function POST(request: NextRequest) {
     // The confirmation carries the download links, so it can only be sent here —
     // never from the capture route, which may run before `webhookConfirmedAt`.
     // `markOrderEmailed` is a conditional UPDATE, so a replayed PayPal event
-    // cannot mail the customer twice.
-    if (result.changed) {
+    // cannot mail the customer twice. The claim is given back when the send
+    // fails, otherwise a delivery error would leave the order looking mailed
+    // with no way to retry, and an unconfirmed send is what strands a paid
+    // customer with no download link.
+    const awaitingEmail =
+      result.changed || (Boolean(result.order.webhookConfirmedAt) && !result.order.emailedAt);
+    if (awaitingEmail) {
       const stored = record.locale;
       const locale: Locale = stored === "fr" || stored === "ar" ? stored : "en";
       const payload = await toConfirmationEmail(result.order, locale);
       if (await markOrderEmailed(record.id)) {
-        await sendOrderConfirmation(payload);
-        await notifyNewOrder(payload);
+        if (await sendOrderConfirmation(payload)) {
+          await notifyNewOrder(payload);
+        } else {
+          await releaseOrderEmail(record.id);
+          console.error(
+            `[paypal-webhook] confirmation email failed for ${record.orderNumber}`,
+          );
+        }
       }
     }
 

@@ -44,6 +44,40 @@ Les variables actuelles sont des placeholders et `PAYPAL_ENV=sandbox`.
 Le webhook doit pointer vers `https://lumen-books-852.netlify.app/api/paypal/webhook`
 et subscribed aux événements `PAYMENT.CAPTURE.COMPLETED` et `PAYMENT.CAPTURE.DENIED`.
 
+### 1.4 Resend — l'email qui porte les liens de téléchargement
+
+**Bloquant.** Un paiement peut être encaissé sans qu'aucun email ne parte : c'est
+exactement ce qui s'est produit sur `LB-261004-2193E6`, payée et confirmée, aucun
+email reçu. L'email de confirmation n'est pas un bonus, c'est le seul canal par
+lequel un acheteur invité reçoit ses liens.
+
+Les valeurs actuelles sont les placeholders de `.env.example` :
+
+| Variable | Actuel | Action |
+|---|---|---|
+| `RESEND_API_KEY` | `re_xxx` | clé API réelle (Resend → API Keys) |
+| `EMAIL_FROM` | `orders@yourdomain.com` | expéditeur sur un domaine **vérifié** |
+| `CONTACT_EMAIL` | `support@yourdomain.com` | adresse de contact réelle |
+
+Deux chemins, du plus rapide au plus propre :
+
+1. **Domaine d'onboarding Resend** — `EMAIL_FROM = "Lumen Books <onboarding@resend.dev>"`.
+   Aucun DNS à poser, mais Resend n'autorise l'envoi **que vers l'adresse du
+   compte Resend**. Suffisant pour valider la chaîne de bout en bout, pas pour
+   vendre.
+2. **Domaine vérifié** — ajouter `lumenbooks.store` dans Resend → Domains, poser
+   les enregistrements DNS qu'il donne (SPF, DKIM, éventuellement DMARC), attendre
+   le statut `verified`, puis `EMAIL_FROM = "Lumen Books <orders@lumenbooks.store>"`.
+   C'est l'option à retenir avant le lancement.
+
+`node scripts/check-env.mjs` refuse désormais de laisser passer un `RESEND_API_KEY`
+ou un `EMAIL_FROM` qui contient encore un token de `.env.example` : ces trois
+variables sont marquées `critical` et font sortir le script en code 1.
+
+Vérifier que l'email part vraiment : dans Resend → Emails, l'envoi doit apparaître
+avec le statut `delivered`. Un `emailedAt` renseigné en base ne prouve **rien**,
+le marqueur est posé avant l'appel à Resend et relâché si l'envoi échoue.
+
 ---
 
 ## 2. Obligatoire — conformité légale
