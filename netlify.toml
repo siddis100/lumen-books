@@ -27,3 +27,16 @@
   for = "/images/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+# Picks up order confirmations that the PayPal webhook could not deliver, for
+# example because Resend rejected the send. Without this a paid customer whose
+# email failed keeps their money and gets nothing: `emailedAt IS NULL` on a
+# webhook-confirmed order is the queue this drains.
+#
+# Every 15 minutes rather than every 5: a confirmation is worth having quickly,
+# but the far more common cause of a failure is a misconfigured sender, and that
+# is fixed by a deploy, not by retrying harder. Netlify's free tier allows daily
+# runs only, so raise this interval if the plan is not Pro; the endpoint is safe
+# to call by hand at any time with `Authorization: Bearer $CRON_SECRET`.
+[functions."/api/cron/resend-confirmations"]
+  schedule = "*/15 * * * *"

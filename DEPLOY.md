@@ -78,6 +78,34 @@ Vérifier que l'email part vraiment : dans Resend → Emails, l'envoi doit appar
 avec le statut `delivered`. Un `emailedAt` renseigné en base ne prouve **rien**,
 le marqueur est posé avant l'appel à Resend et relâché si l'envoi échoue.
 
+#### Reprise automatique
+
+`src/app/api/cron/resend-confirmations` rattrape ce que le webhook n'a pas pu
+envoyer. Le webhook ne s'exécute qu'une fois : si Resend refuse l'envoi (clé
+expirée, expéditeur non vérifié, panne du fournisseur), la commande revient dans
+la file et plus rien ne la reprend, sinon un client payé reste sans son livre.
+
+`emailedAt IS NULL` sur une commande confirmée par le webhook *est* la file :
+payée, confirmée, non livrée. L'endpoint réessaie par lot de 25, plus anciennes
+d'abord, et reprend exactement le même verrou conditionnel que le webhook — un
+rejeu concurrent ne peut donc pas produire de doublon.
+
+Programmé toutes les 15 minutes dans `netlify.toml`. Le plan gratuit Netlify
+n'autorise que les exécutions quotidiennes : dans ce cas, augmenter l'intervalle
+ou déclencher à la main avec :
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" \
+  https://lumen-books-852.netlify.app/api/cron/resend-confirmations
+```
+
+La réponse JSON indique `pending`, `sent` et `failed`. Un `failed` non vide
+signale un expéditeur encore mal configuré : c'est un problème de configuration,
+pas de Tentative.
+
+Pour une commande précise, en local :
+`npx tsx --conditions=react-server scripts/retry-confirmation-email.ts --order LB-…  --apply`
+
 ---
 
 ## 2. Obligatoire — conformité légale

@@ -413,6 +413,34 @@ export async function releaseOrderEmail(orderId: string): Promise<void> {
     .where(and(eq(orders.id, orderId), sql`${orders.emailedAt} is not null`));
 }
 
+/**
+ * Orders the webhook has settled but whose confirmation email never left.
+ *
+ * Because `releaseOrderEmail` gives the claim back when a send fails, `emailedAt
+ * IS NULL` on a webhook-confirmed order means exactly one thing: paid, confirmed,
+ * and not delivered. That makes the column a ready-made work queue, so a failed
+ * send self-heals on the next run instead of waiting for a PayPal replay that may
+ * never come.
+ *
+ * Oldest first, so a backlog drains from the customer who has waited longest.
+ */
+export async function listOrdersAwaitingEmail(limit = 50): Promise<OrderWithLines[]> {
+  const rows = await db
+    .select()
+    .from(orders)
+    .where(
+      and(
+        eq(orders.status, "paid"),
+        sql`${orders.webhookConfirmedAt} IS NOT NULL`,
+        sql`${orders.emailedAt} IS NULL`,
+      ),
+    )
+    .orderBy(orders.paidAt)
+    .limit(limit);
+
+  return Promise.all(rows.map(async (order) => ({ ...order, items: await getOrderItems(order.id) })));
+}
+
 /** Orders still waiting for a PayPal webhook, used by the maintenance endpoint. */
 export async function listOrdersAwaitingWebhook(limit = 50) {
   return db
