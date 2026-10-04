@@ -78,6 +78,24 @@ Vérifier que l'email part vraiment : dans Resend → Emails, l'envoi doit appar
 avec le statut `delivered`. Un `emailedAt` renseigné en base ne prouve **rien**,
 le marqueur est posé avant l'appel à Resend et relâché si l'envoi échoue.
 
+#### Vérifier la configuration sans logger dans l'UI
+
+`GET /api/health` reste une sonde de vivacité, mais il répond aussi si la boutique
+peut réellement servir un invité. Un booléen par réglage, jamais une valeur :
+
+```bash
+curl https://lumen-books-852.netlify.app/api/health
+```
+
+```json
+{"status":"ok","config":{"emailSender":true,"emailApiKey":true,"paypalWebhook":true,"publicOrigin":true},"guestCheckoutReady":true}
+```
+
+`guestCheckoutReady` est le seul à surveiller : un invité n'a pas de compte de
+repli, l'email de confirmation est son unique accès au fichier. Les quatre
+booléens pris isolément disent lequel manque. C'est le contrôle qui remplace le
+fait de découvrir le problème après un paiement.
+
 #### Reprise automatique
 
 `src/app/api/cron/resend-confirmations` rattrape ce que le webhook n'a pas pu
