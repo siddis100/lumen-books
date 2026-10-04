@@ -31,6 +31,7 @@ export async function SiteFooter({ categories = [] }: { categories?: HeaderCateg
     { href: "/about", label: t("about") },
     { href: "/contact", label: t("contact") },
     { href: "/faq", label: t("faq") },
+    { href: "/recover", label: t("recover") },
   ];
 
   const legalLinks = [

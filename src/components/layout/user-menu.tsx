@@ -26,6 +26,7 @@ export type HeaderUser = {
 export function UserMenu({ user }: { user: HeaderUser }) {
   const t = useTranslations("nav");
   const tAccount = useTranslations("account");
+  const tAccountNav = useTranslations("account.nav");
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -69,13 +70,13 @@ export function UserMenu({ user }: { user: HeaderUser }) {
         <DropdownMenuItem asChild>
           <Link href="/account">
             <User className="size-4" />
-            {tAccount("title")}
+            {tAccountNav("overview")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
           <Link href="/account/orders">
             <User className="size-4" />
-            {tAccount("orders")}
+            {tAccountNav("orders")}
           </Link>
         </DropdownMenuItem>
         {user.isAdmin ? (

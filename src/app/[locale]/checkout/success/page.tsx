@@ -45,7 +45,7 @@ export default async function CheckoutSuccessPage({
   // missing when calling the API.
   return (
     <div className="bg-muted/30 flex min-h-[60vh] items-center justify-center py-10">
-      <CheckoutSuccess orderNumber={order ?? ""} paypalOrderId={token ?? ""} />
+      <CheckoutSuccess orderNumber={order ?? ""} paypalOrderId={token ?? ""} locale={locale} />
     </div>
   );
 }

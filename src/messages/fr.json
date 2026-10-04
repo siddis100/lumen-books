@@ -303,6 +303,10 @@
     "paypalUnavailable": "Le paiement n'est pas encore disponible. Réessayez dans un instant.",
     "downloadReady": "Vos fichiers sont prêts",
     "downloadPendingHint": "Les liens de téléchargement se débloquent dès que PayPal confirme le paiement.",
+    "download": "Télécharger",
+    "fileUnavailable": "Fichier pas encore disponible",
+    "linkValidHint": "Ces liens expirent d'eux-mêmes au bout de 7 jours. Vous pouvez toujours en régénérer.",
+    "recoverLinks": "Retrouver mes liens",
     "securityNote": "Vous serez redirigé vers PayPal pour approuver le paiement, puis ramené ici.",
     "lineItem": "Article",
     "unitPrice": "Prix unitaire",
@@ -315,6 +319,7 @@
     "metaTitle": "Mon compte",
     "title": "Mon compte",
     "greeting": "Bonjour, {name}",
+    "guest": "Invité",
     "nav": {
       "overview": "Vue d'ensemble",
       "orders": "Commandes",
@@ -669,7 +674,12 @@
       },
       "instant": {
         "q": "Comment obtenir mes livres après le paiement ?",
-        "a": "Dès que PayPal confirme le paiement, vos liens de téléchargement se débloquent. Avec un compte, ils apparaissent aussi définitivement dans Mon compte → Téléchargements, pour les retélécharger sur n'importe quel appareil, à tout moment."
+        "a": "Dès que PayPal confirme le paiement, vos liens de téléchargement se débloquent — sur la page de confirmation elle-même, et définitivement dans Mon compte → Téléchargements si vous avez un compte, pour les retélécharger sur n'importe quel appareil, à tout moment."
+      },
+      "lostLinks": {
+        "q": "Je n'ai jamais reçu l'email, ou j'ai perdu mes liens. Que faire ?",
+        "a": "Ouvrez la page Retrouver mes téléchargements et saisissez votre numéro de commande avec l'adresse email utilisée pour payer : les liens sont recréés immédiatement. Chaque lien reste valable 7 jours, et vous pouvez en générer un nouveau à tout moment.",
+        "action": { "href": "/recover", "label": "Retrouver mes téléchargements" }
       },
       "paypal": {
         "q": "Quels moyens de paiement acceptez-vous ?",
@@ -905,6 +915,7 @@
     "privacy": "Politique de confidentialité",
     "refund": "Politique de remboursement",
     "cookies": "Paramètres des cookies",
+    "recover": "Retrouver mes téléchargements",
     "rights": "© {year} Lumen Books. Tous droits réservés.",
     "payments": "Paiements sécurisés par PayPal",
     "currency": "Prix en USD"
@@ -928,5 +939,32 @@
     "save": "Enregistrer mon choix",
     "essentialHint": "Indispensables pour la connexion, le panier et les téléchargements. Toujours actifs.",
     "analyticsHint": "Nous aide à comprendre quelles pages sont utiles. Aucune donnée personnelle, aucune publicité."
+  },
+  "recover": {
+    "metaTitle": "Retrouver mes téléchargements",
+    "metaDescription": "Email de confirmation perdu ? Récupérez vos liens de téléchargement Lumen Books avec votre numéro de commande et l'adresse email utilisée pour payer.",
+    "title": "Retrouver mes téléchargements",
+    "subtitle": "Indiquez votre numéro de commande et l'adresse email utilisée pour payer : vos liens de téléchargement sont régénérés immédiatement.",
+    "benefitsTitle": "Pourquoi cette page existe",
+    "benefitEmail": "Un email peut finir dans les indésirables, ou ne jamais arriver. Vos fichiers ne doivent pas en dépendre.",
+    "benefitInstant": "Les liens sont régénérés à la volée et restent valables 7 jours.",
+    "benefitSecure": "Vous seul connaissez ces deux informations, et rien n'est envoyé ailleurs.",
+    "orderNumber": "Numéro de commande",
+    "orderNumberHint": "Il figure dans votre email de confirmation et dans l'adresse de la page de paiement.",
+    "email": "Adresse email",
+    "emailHint": "Celle utilisée pour le paiement, chez PayPal ou sur la page de commande.",
+    "submit": "Afficher mes téléchargements",
+    "working": "Vérification…",
+    "foundTitle": "Commande trouvée. Vos liens sont prêts :",
+    "download": "Télécharger",
+    "fileUnavailable": "Fichier pas encore disponible",
+    "linkValidHint": "Ces liens expirent d'eux-mêmes au bout de 7 jours.",
+    "totalLabel": "Payé :",
+    "anotherOrder": "Récupérer une autre commande",
+    "errorNotFound": "Aucune commande payée ne correspond à ce numéro et à cette adresse email. Vérifiez les deux, ou contactez-nous : nous retrouverons votre commande.",
+    "errorNotPaid": "Cette commande existe mais son paiement n'est pas encore confirmé. Patientez quelques secondes puis réessayez.",
+    "errorUseAccount": "Cette commande est rattachée à un compte : connectez-vous pour retrouver vos fichiers.",
+    "errorRateLimited": "Trop de tentatives. Réessayez dans quelques minutes.",
+    "errorGeneric": "Impossible de récupérer vos liens pour le moment. Réessayez, ou contactez-nous avec votre numéro de commande."
   }
 }

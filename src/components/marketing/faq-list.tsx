@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { HelpCircle, Search } from "lucide-react";
+import { ArrowRight, HelpCircle, Search } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -12,7 +12,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "@/i18n/navigation";
 
-export type FaqEntry = { id: string; question: string; answer: string };
+export type FaqEntry = {
+  id: string;
+  question: string;
+  answer: string;
+  /** Optional shortcut out of the answer, e.g. towards the recovery page. */
+  action?: { href: string; label: string };
+};
 
 /**
  * Searchable FAQ. Filtering happens in the browser because the list is small,
@@ -73,6 +79,14 @@ export function FaqList({
               <AccordionTrigger className="text-start text-base font-medium">{item.question}</AccordionTrigger>
               <AccordionContent className="text-muted-foreground text-sm leading-relaxed">
                 {item.answer}
+                {item.action ? (
+                  <Button asChild variant="outline" size="sm" className="mt-3 h-9">
+                    <Link href={item.action.href}>
+                      <ArrowRight className="size-4 rtl:rotate-180" aria-hidden />
+                      {item.action.label}
+                    </Link>
+                  </Button>
+                ) : null}
               </AccordionContent>
             </AccordionItem>
           ))}

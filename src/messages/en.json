@@ -303,6 +303,10 @@
     "paypalUnavailable": "Payments are not available yet. Please try again shortly.",
     "downloadReady": "Your files are ready",
     "downloadPendingHint": "Download links unlock as soon as PayPal confirms the payment.",
+    "download": "Download",
+    "fileUnavailable": "File not available yet",
+    "linkValidHint": "These links expire on their own after 7 days. You can always generate new ones.",
+    "recoverLinks": "Get my links again",
     "securityNote": "You will be taken to PayPal to approve the payment, then returned here.",
     "lineItem": "Line item",
     "unitPrice": "Unit price",
@@ -315,6 +319,7 @@
     "metaTitle": "My account",
     "title": "My account",
     "greeting": "Hello, {name}",
+    "guest": "Guest",
     "nav": {
       "overview": "Overview",
       "orders": "Orders",
@@ -669,7 +674,12 @@
       },
       "instant": {
         "q": "How do I get my books after paying?",
-        "a": "As soon as PayPal confirms the payment, your download links unlock. With an account they also appear permanently under My account → Downloads, so you can download again on any device, any time."
+        "a": "As soon as PayPal confirms the payment, your download links unlock — on the confirmation page itself, and permanently under My account → Downloads if you have an account, so you can download again on any device, any time."
+      },
+      "lostLinks": {
+        "q": "I never received the email, or I lost my links. What now?",
+        "a": "Open the Get your downloads page and enter your order number with the email address you paid with: your links are generated again on the spot. Each link stays valid for 7 days, and you can create a new one whenever you need it.",
+        "action": { "href": "/recover", "label": "Get your downloads" }
       },
       "paypal": {
         "q": "Which payment methods do you accept?",
@@ -905,6 +915,7 @@
     "privacy": "Privacy Policy",
     "refund": "Refund Policy",
     "cookies": "Cookie settings",
+    "recover": "Get your downloads",
     "rights": "© {year} Lumen Books. All rights reserved.",
     "payments": "Payments secured by PayPal",
     "currency": "Prices in USD"
@@ -928,5 +939,32 @@
     "save": "Save my choice",
     "essentialHint": "Required for sign-in, cart and downloads. Always active.",
     "analyticsHint": "Helps us understand which pages are useful. No personal data, no advertising."
+  },
+  "recover": {
+    "metaTitle": "Get your downloads",
+    "metaDescription": "Lost your confirmation email? Retrieve your Lumen Books download links with your order number and the email address you paid with.",
+    "title": "Get your downloads",
+    "subtitle": "Enter your order number and the email address used to pay: your download links are generated again immediately.",
+    "benefitsTitle": "Why this page exists",
+    "benefitEmail": "An email can land in spam, or never arrive at all. Your files must not depend on it.",
+    "benefitInstant": "Links are regenerated on the spot and stay valid for 7 days.",
+    "benefitSecure": "Only you know those two details, and nothing is sent anywhere else.",
+    "orderNumber": "Order number",
+    "orderNumberHint": "It appears in your confirmation email and in the address of the payment page.",
+    "email": "Email address",
+    "emailHint": "The address you paid with, on PayPal or on the order page.",
+    "submit": "Show my downloads",
+    "working": "Checking…",
+    "foundTitle": "Order found. Your links are ready:",
+    "download": "Download",
+    "fileUnavailable": "File not available yet",
+    "linkValidHint": "These links expire on their own after 7 days.",
+    "totalLabel": "Paid:",
+    "anotherOrder": "Look up another order",
+    "errorNotFound": "No paid order matches that number and email address. Check both, or contact us and we will find your order.",
+    "errorNotPaid": "This order exists but its payment is not confirmed yet. Wait a few seconds and try again.",
+    "errorUseAccount": "This order is tied to an account: sign in to get your files back.",
+    "errorRateLimited": "Too many attempts. Please try again in a few minutes.",
+    "errorGeneric": "We could not retrieve your links right now. Try again, or contact us with your order number."
   }
 }

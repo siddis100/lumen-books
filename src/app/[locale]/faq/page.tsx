@@ -30,11 +30,17 @@ export default async function FaqPage({ params }: { params: Promise<{ locale: Lo
   const t = await getTranslations({ locale, namespace: "faq" });
   const tn = await getTranslations({ locale, namespace: "nav" });
 
-  const entries = t.raw("items") as Record<string, { q: string; a: string }>;
+  // `action` lets an entry hand the reader the shortcut its answer describes,
+// instead of leaving them to hunt for the page in the footer.
+  const entries = t.raw("items") as Record<
+    string,
+    { q: string; a: string; action?: { href: string; label: string } }
+  >;
   const items = Object.entries(entries).map(([id, entry]) => ({
     id,
     question: entry.q,
     answer: entry.a,
+    action: entry.action,
   }));
 
   return (
