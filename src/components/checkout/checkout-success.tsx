@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CheckCircle2, Clock, Loader2 } from "lucide-react";
+import { CheckCircle2, Clock, Download, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
@@ -10,25 +10,42 @@ import { useCartStore } from "@/stores/cart";
 
 type Phase = "capturing" | "confirmed" | "pending" | "failed";
 
+/** One line of the order, with the signed link the server minted for it. */
+type DeliveryItem = {
+  title: string;
+  author: string;
+  quantity: number;
+  hasFile: boolean;
+  downloadUrl: string | null;
+};
+
 /**
  * Post-PayPal landing page.
  *
  * Runs two steps: capture the approved order, then poll until PayPal's signed
  * webhook has confirmed it. Downloads are only offered once `downloadsReady`
  * is true, so a customer never gets a dead link after paying.
+ *
+ * The links themselves come from the same payload the confirmation email uses,
+ * which is what makes this page a real delivery channel: the buyer is handed
+ * the files on screen instead of having to hope an email arrives.
  */
 export function CheckoutSuccess({
   orderNumber,
   paypalOrderId,
+  locale,
 }: {
   orderNumber: string;
   paypalOrderId: string;
+  locale: string;
 }) {
   const t = useTranslations("checkout");
   const tc = useTranslations("cart");
 
   const [phase, setPhase] = useState<Phase>("capturing");
   const [totalCents, setTotalCents] = useState<number | null>(null);
+  const [delivery, setDelivery] = useState<DeliveryItem[]>([]);
+  const [isGuest, setIsGuest] = useState(true);
   const started = useRef(false);
   const clearCart = useCartStore((state) => state.clear);
 
@@ -36,7 +53,7 @@ export function CheckoutSuccess({
   // purpose: a recursive callback would have to reference itself from inside
   // its own initialiser.
   const poll = useCallback(async (): Promise<void> => {
-    const url = `/api/orders/status?order=${encodeURIComponent(orderNumber)}&token=${encodeURIComponent(paypalOrderId)}`;
+    const url = `/api/orders/status?order=${encodeURIComponent(orderNumber)}&token=${encodeURIComponent(paypalOrderId)}&locale=${encodeURIComponent(locale)}`;
     for (let attempt = 0; attempt < 12; attempt += 1) {
       const response = await fetch(url, { cache: "no-store" });
       if (!response.ok) {
@@ -50,9 +67,13 @@ export function CheckoutSuccess({
         webhookConfirmed: boolean;
         downloadsReady: boolean;
         totalCents: number;
+        guestOrder?: boolean;
+        delivery?: DeliveryItem[];
       };
       setTotalCents(data.totalCents);
+      setIsGuest(data.guestOrder !== false);
       if (data.downloadsReady) {
+        setDelivery(data.delivery ?? []);
         setPhase("confirmed");
         return;
       }
@@ -60,7 +81,7 @@ export function CheckoutSuccess({
       await new Promise((resolve) => setTimeout(resolve, 2000));
     }
     setPhase("pending");
-  }, [orderNumber, paypalOrderId]);
+  }, [orderNumber, paypalOrderId, locale]);
 
   useEffect(() => {
     if (started.current) return;
@@ -119,15 +140,64 @@ export function CheckoutSuccess({
               </span>
             </div>
           </div>
+          {delivery.length > 0 ? (
+            <div className="w-full space-y-3 text-left">
+              <p className="font-display text-sm font-semibold">{t("downloadReady")}</p>
+              <ul className="space-y-2">
+                {delivery.map((item, index) => (
+                  <li
+                    key={`${item.title}-${index}`}
+                    className="bg-card flex items-center justify-between gap-3 rounded-xl border p-3"
+                  >
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-medium">{item.title}</span>
+                      <span className="text-muted-foreground block truncate text-xs">
+                        {item.author}
+                      </span>
+                    </span>
+                    {item.downloadUrl ? (
+                      <Button asChild size="sm" variant="outline" className="shrink-0">
+                        <a href={item.downloadUrl}>
+                          <Download className="size-4" aria-hidden />
+                          {t("download")}
+                        </a>
+                      </Button>
+                    ) : (
+                      <span className="text-muted-foreground shrink-0 text-xs">
+                        {t("fileUnavailable")}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-muted-foreground text-xs">{t("linkValidHint")}</p>
+            </div>
+          ) : null}
+
+          {/* The server only mints links for guest orders, so their library
+              button would be a dead end: they have no account to open. */}
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Button asChild size="lg">
-              <Link href="/account/downloads">{t("goToAccount")}</Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link href="/books">{tc("continueShopping")}</Link>
-            </Button>
+            {delivery.length > 0 || isGuest ? (
+              <Button asChild variant="outline" size="lg">
+                <Link href="/books">{tc("continueShopping")}</Link>
+              </Button>
+            ) : (
+              <>
+                <Button asChild size="lg">
+                  <Link href="/account/downloads">{t("goToAccount")}</Link>
+                </Button>
+                <Button asChild variant="outline" size="lg">
+                  <Link href="/books">{tc("continueShopping")}</Link>
+                </Button>
+              </>
+            )}
           </div>
-          <p className="text-muted-foreground text-xs">{t("guestNote")}</p>
+          <p className="text-muted-foreground text-xs">
+            {t("guestNote")}{" "}
+            <Link href="/recover" className="text-brand font-medium underline underline-offset-4">
+              {t("recoverLinks")}
+            </Link>
+          </p>
         </>
       ) : null}
 
@@ -144,8 +214,13 @@ export function CheckoutSuccess({
             {t("orderNumber")} <span className="font-semibold">{orderNumber}</span>
           </p>
           <Button asChild size="lg">
-            <Link href="/account/orders">{t("goToAccount")}</Link>
-          </Button>
+              <Link href={isGuest ? "/recover" : "/account/orders"}>
+                {isGuest ? t("recoverLinks") : t("goToAccount")}
+              </Link>
+            </Button>
+          {/* The button above already is the recovery link, so the closing
+              sentence keeps its plain form here: two identical links read as
+              a mistake. */}
           <p className="text-muted-foreground text-xs">{t("guestNote")}</p>
         </>
       ) : null}

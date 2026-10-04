@@ -48,8 +48,8 @@ et subscribed aux événements `PAYMENT.CAPTURE.COMPLETED` et `PAYMENT.CAPTURE.D
 
 **Bloquant.** Un paiement peut être encaissé sans qu'aucun email ne parte : c'est
 exactement ce qui s'est produit sur `LB-261004-2193E6`, payée et confirmée, aucun
-email reçu. L'email de confirmation n'est pas un bonus, c'est le seul canal par
-lequel un acheteur invité reçoit ses liens.
+email reçu. L'email reste la copie durable d'un achat, mais il n'est plus le seul
+accès au fichier : voir les deux canaux de secours plus bas.
 
 Les valeurs actuelles sont les placeholders de `.env.example` :
 
@@ -91,10 +91,38 @@ curl https://lumen-books-852.netlify.app/api/health
 {"status":"ok","config":{"emailSender":true,"emailApiKey":true,"paypalWebhook":true,"publicOrigin":true},"guestCheckoutReady":true}
 ```
 
-`guestCheckoutReady` est le seul à surveiller : un invité n'a pas de compte de
-repli, l'email de confirmation est son unique accès au fichier. Les quatre
-booléens pris isolément disent lequel manque. C'est le contrôle qui remplace le
-fait de découvrir le problème après un paiement.
+`guestCheckoutReady` est le seul à surveiller : il résume les quatre réglages qui
+font qu'un invité peut être servi. C'est le contrôle qui remplace le fait de
+découvrir le problème après un paiement.
+
+#### Les deux canaux qui survivent à un email cassé
+
+Un invité n'a pas de compte de repli. Depuis le correctif, la livraison ne dépend
+plus de la boîte de réception, et aucun des trois canaux ne dépend des deux
+autres :
+
+1. **La page de confirmation elle-même** (`/checkout/success?order=…&token=…`)
+   affiche les liens signés dès que le webhook a confirmé la commande. Le client
+   paie, il clique, il a ses fichiers : l'email n'est plus sur le chemin critique.
+2. **La page `/<locale>/recover`**, accessible depuis le pied de page, la FAQ et la
+   page de confirmation. Numéro de commande + adresse email suffisent à régénérer
+   les liens à la volée. Limité à 10 tentatives par IP et par heure, et un numéro
+   de commande sans correspondance répond `404 order_not_found` quel que soit
+   l'email saisi : la page ne peut pas servir à découvrir qui a acheté quoi.
+3. **L'email**, copie durable, la seule qui survit à un client qui vide sa boîte.
+
+Les liens des trois canaux portent le même jeton HMAC et expirent au bout de
+7 jours. Ils ne sont émis que pour les commandes invité : une commande rattachée
+à un compte reste servie par la bibliothèque, et `/recover` répond
+`409 use_account` pour l'orienter vers la connexion.
+
+**Conséquence directe : `NEXT_PUBLIC_SITE_URL` devient bloquant.** Les liens
+signés sont des URL absolues construites à partir de cette variable. Laissée sur
+`http://localhost:3000`, tous les boutons « Télécharger » de la page de
+confirmation et de `/recover` pointent vers la machine du visiteur : le paiement
+fonctionne, la livraison non. Elle doit valoir
+`https://lumen-books-852.netlify.app` (puis l'origine réelle avec le domaine),
+sans barre oblique finale. C'est aussi le booléen `publicOrigin` de `/api/health`.
 
 #### Reprise automatique
 
@@ -173,6 +201,7 @@ Sans domaine, le site reste accessible uniquement sur `*.netlify.app`.
 
 - `/api/cron/expire-links` est documenté dans `.env.example` mais n'a jamais été écrit.
   `listOrdersAwaitingWebhook` (`src/lib/orders.ts:361`) est du code mort.
-- `src/app/api/health/route.ts` ne renvoie que `{status}` ; à supprimer en production.
+- `src/app/api/health/route.ts` renvoie `{status, config, guestCheckoutReady}`.
+  Utile en préproduction ; àrestrict à un accès interne avant l'ouverture.
 - Un build local `netlify deploy` échoue sous Windows (bug OpenNext). Les builds
   distants Netlify (Linux) fonctionnent — c'est le chemin utilisé.
